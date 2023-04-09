@@ -6,6 +6,14 @@ Run Large Language Model agents in Salesforce apex
 
 An “Agent” is a technique for instilling the ability for an LLM to “Reason” and take “Action”. This approach is introduced by the [ReAct Paper](https://arxiv.org/pdf/2210.03629.pdf) (Reason → Act) and used in popular libraries like [langchain](https://github.com/hwchase17/langchain) and [auto-gpt](https://github.com/Torantulino/Auto-GPT).
 
+## Library Terminology
+
+- `Model`: LLM/GTP model. Currently only OpenAI GPT Completion & Chat models are supported.
+- `Prompt`: The communication "protocal" between the model & system. Currently only ReAct style prompts are supported.
+- `Agent`: A instance formed to solve a given objective.
+- `Tools`: The commands at the agents disposal
+- `Action`: The act of invoking a tool
+
 ## WARNING: THIS IS EXPERIMENTAL!
 
 This library is not production ready and may never be:
@@ -59,7 +67,7 @@ while (agent.getResult() == null) {
 }P
 ```
 
-## Actions
+## :hammer_and_wrench: Tools
 
 - [x] Internet Search
 - [x] Search for records
@@ -79,9 +87,9 @@ while (agent.getResult() == null) {
 - [ ] create & run other agents
 - [ ] ???
 
-### Custom Action
+### Custom Tools
 
-Creating a custom action is easy. Just create a class that implements the IAgentTool interface and add it to the map of tools when you create the prompt.
+Creating a custom tool is easy. Just create a class that implements the IAgentTool interface and add it to the map of tools when you create the prompt.
 
 ```java
 public class GreetingAgentTool implements IAgentTool {
