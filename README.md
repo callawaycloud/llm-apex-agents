@@ -67,10 +67,12 @@ while (agent.getResult() == null) {
 - [x] Get SObject Fields
 - [ ] List SObjects
 - [ ] Draft / Send Email
-- [ ] Create Record
+- [ ] Insert Record
 - [ ] Update Record
 - [ ] Calculate
-- [ ] SOQL query
+- [ ] Approve / Reject Record
+- [ ] Launch flow
+- [ ] Write/Run SOQL query
 - [ ] Read Apex Class
 - [ ] Run Tests
 - [ ] Run Apex?!
@@ -111,4 +113,5 @@ Other housekeeping:
 - [ ] refactor API tokens to use named credentials
 - [ ] Add more documentation
 - [ ] improve observability
+- [ ] LWC Chat Frontend?
 - [ ] add tests
