@@ -2,7 +2,7 @@
 
 Run Large Language Model agents in Salesforce apex
 
-## What is an Agent
+## :shipit: What is an Agent?
 
 An “Agent” is a technique for instilling the ability for an LLM to “Reason” and take “Action”. This approach is introduced by the [ReAct Paper](https://arxiv.org/pdf/2210.03629.pdf) (Reason → Act) and used in popular libraries like [langchain](https://github.com/hwchase17/langchain) and [auto-gpt](https://github.com/Torantulino/Auto-GPT).
 
@@ -14,7 +14,11 @@ An “Agent” is a technique for instilling the ability for an LLM to “Reason
 - `Tools`: The commands at the agents disposal
 - `Action`: The act of invoking a tool
 
-## WARNING: THIS IS EXPERIMENTAL!
+## Getting Started
+
+> Run in scratch org or install to developer edition using `sfdx force:mdapi:deploy`
+
+### :exclamation: WARNING: THIS IS EXPERIMENTAL!
 
 This library is not production ready and may never be:
 
@@ -22,10 +26,6 @@ This library is not production ready and may never be:
 - The code itself is likely to undergo significant breaking changes.
 - It is not yet optimized for performance and is not yet fully tested.
 - Use at your own risk.
-
-## Getting Started
-
-> Run in scratch org or install to developer edition using `sfdx force:mdapi:deploy`
 
 Library comes out of the box with some useful agents and actions.
 
@@ -80,6 +80,7 @@ while (agent.getResult() == null) {
 - [ ] Calculate
 - [ ] Approve / Reject Record
 - [ ] Launch flow
+- [ ] Delete flows :trollface:
 - [ ] Write/Run SOQL query
 - [ ] Read Apex Class
 - [ ] Run Tests
