@@ -1,17 +1,114 @@
 # llm-apex-agents
+
 Run Large Language Model agents in Salesforce apex
 
 ## What is an Agent
-An “Agent” is a technique for instilling the ability for an LLM to “Reason” and take “Action”.  This approach is introduced by the [ReAct Paper](https://arxiv.org/pdf/2210.03629.pdf) (Reason → Act)  and used in popular libraries like langchain to build powerful applications.
 
-## Creating an agent
+An “Agent” is a technique for instilling the ability for an LLM to “Reason” and take “Action”. This approach is introduced by the [ReAct Paper](https://arxiv.org/pdf/2210.03629.pdf) (Reason → Act) and used in popular libraries like [langchain](https://github.com/hwchase17/langchain) and [auto-gpt](https://github.com/Torantulino/Auto-GPT).
 
-*Coming soon*
+## WARNING: THIS IS EXPERIMENTAL!
 
-## Creating Actions
+This library is not production ready and may never be:
 
-*Coming soon*
+- The API usage can be relatively expensive if you let it run wild.
+- The code itself is likely to undergo significant breaking changes.
+- It is not yet optimized for performance and is not yet fully tested.
+- Use at your own risk.
 
-## Memory
+## Getting Started
 
-*Coming soon*
+> Run in scratch org or install to developer edition using `sfdx force:mdapi:deploy`
+
+Library comes out of the box with some useful agents and actions.
+
+It's recommended that you use `OpenAIChatModel` & `ReActZeroShotChatPromptManager` and only include the minimum number of tools you need.
+
+### Example
+
+```java
+OpenAIChatModel chatLLM = new OpenAIChatModel(
+  'YOUR_OPEN_AI_KEY'
+);
+
+// setup tools
+Map<String, IAgentTool> tools = new Map<String, IAgentTool>{
+  'search' => new InternetSearchAgentAction(
+    'YOUR_SERP_API_KEY'
+  ),
+  'find_records' => new SOSLSearchAgentTool(),
+  'send_notification' => new SentNotificationAgentTool('0MLDa0000000EMDOA2'),
+  'get_fields' => new GetSObjectFieldsAgentTool()
+};
+
+// add prompt
+ReActZeroShotChatPromptManager prompt = new ReActZeroShotChatPromptManager(
+  tools
+);
+
+// construct agent
+ReActChatAgent agent = new ReActChatAgent(
+  'list all the picklist fields on the account object',
+  prompt,
+  chatLLM
+);
+agent.maxInvocations = 10;
+
+// run agent.  Also see AgentQueueable
+while (agent.getResult() == null) {
+  agent.next();
+}P
+```
+
+## Actions
+
+- [x] Internet Search
+- [x] Search for records
+- [x] Send Custom Notification
+- [x] Get SObject Fields
+- [ ] List SObjects
+- [ ] Draft / Send Email
+- [ ] Create Record
+- [ ] Update Record
+- [ ] Calculate
+- [ ] SOQL query
+- [ ] Read Apex Class
+- [ ] Run Tests
+- [ ] Run Apex?!
+- [ ] create & run other agents
+- [ ] ???
+
+### Custom Action
+
+Creating a custom action is easy. Just create a class that implements the IAgentTool interface and add it to the map of tools when you create the prompt.
+
+```java
+public class GreetingAgentTool implements IAgentTool {
+  public string getDescription() {
+    return 'Get a greeting';
+  }
+
+  public Map<string, string> getParameters() {
+    Map<string, string> params = new Map<string, string>();
+    params.put('name', 'The name to greet');
+    return params;
+  }
+
+  public string execute(Map<string, string> args) {
+    return 'hello ' + args.get('name');
+  }
+```
+
+## Custom Prompts
+
+You can write your own ReAct style prompts by implementing `Prompt.IReAct`.
+
+## Contributing
+
+The easiest way to contribute at this stage is to create new "AgentTools" (PR's welcome!) and experiment to see what this thing can do.
+
+Other housekeeping:
+
+- [ ] refactor API tokens to use named credentials
+- [ ] Add more documentation
+- [ ] improve observability
+- [ ] add tests
