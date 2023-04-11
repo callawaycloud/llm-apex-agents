@@ -68,7 +68,6 @@ agent.maxInvocations = 15;
 
 AgentQueueable queuable = new AgentQueueable(agent);
 System.enqueueJob(queuable);
-}
 ```
 
 **Tested Prompts:**
