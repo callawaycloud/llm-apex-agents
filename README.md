@@ -73,15 +73,15 @@ System.enqueueJob(queuable);
 
 **Tested Prompts:**
 
-- :white_check_mark: Search for accounts containing the word "sample" and send a notification to the user with name = "charlie jonas", notifying them that they should remove the account.,
-- :white_check_mark: write a SOQL query that returns all billing related fields for an account. Send me a notification with the results of the query,
-- :white_check_mark: Get the weather tomorrow in Lander, wyoming.  Send a notification to Charlie Jonas letting him know how to dress,
-- :white_check_mark: Research 3 companies that offer leading edge solutions for building API.  Insert the new account with basic information about the business, but only if the account does not already exist.,
-- :white_check_mark: Find out how many employees work at amazon and update the account,
-- :white_check_mark:query 3 accounts that do not have Number of Employees set.  Update the account with the number of employees from the internet.,
-- :white_check_mark: See if you can fill in any missing information on the amazon account. Send me a notification with the summary
-- :white_check_mark: Search for accounts containing the word "sample". Create a task assigned to me with the subject "Remove Sample Account
-- :white_check_mark: write a SOQL query to group invoice total by project name.  Send me the results in a notification
+- :white_check_mark: `Search for accounts containing the word "sample" and send a notification to the user with name = "charlie jonas", notifying them that they should remove the account.`
+- :white_check_mark: `write a SOQL query that returns all billing related fields for an account. Send me a notification with the results of the query`
+- :white_check_mark: `Get the weather tomorrow in Lander, wyoming.  Send a notification to Charlie Jonas letting him know how to dress`
+- :white_check_mark: `Research 3 companies that offer leading edge solutions for building API.  Insert the new account with basic information about the business, but only if the account does not already exist.`
+- :white_check_mark: `Find out how many employees work at amazon and update the account`
+- :white_check_mark: `query 3 accounts that do not have Number of Employees set.  Update the account with the number of employees from the internet.`
+- :white_check_mark: `See if you can fill in any missing information on the amazon account. Send me a notification with the summary`
+- :white_check_mark: `Search for accounts containing the word "sample". Create a task assigned to me with the subject "Remove Sample Account`
+- :white_check_mark: `write a SOQL query to group invoice total by project name.  Send me the results in a notification`
 
 
 ## :hammer_and_wrench: Tools
