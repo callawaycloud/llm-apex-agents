@@ -15,11 +15,11 @@ public class SOSLSearchAgentTool implements IAgentTool {
     String searchTerm = args.get('term');
     String objectType = args.get('objectType');
 
-    if (searchTerm != null) {
+    if (searchTerm == null) {
       return 'Missing required parameter: searchTerm';
     }
 
-    if (objectType != null) {
+    if (objectType == null) {
       return 'Missing required parameter: objectType';
     }
 

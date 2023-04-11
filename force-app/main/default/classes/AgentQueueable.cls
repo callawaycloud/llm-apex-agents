@@ -89,6 +89,7 @@ public class AgentQueueable implements Queueable, Database.AllowsCallouts {
         }
       }
       logRecord.Log__c = log;
+      logRecord.Last_Agent_Update__c = System.now();
     }
   }
 }

@@ -27,6 +27,10 @@
                 <behavior>Required</behavior>
                 <field>Agent_Id__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Last_Agent_Update__c</field>
+            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>

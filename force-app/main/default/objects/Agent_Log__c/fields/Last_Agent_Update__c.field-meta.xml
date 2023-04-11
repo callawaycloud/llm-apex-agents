@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Last_Agent_Update__c</fullName>
+    <description>The last time the agent ran</description>
+    <externalId>false</externalId>
+    <inlineHelpText>The last time the agent ran</inlineHelpText>
+    <label>Last Agent Update</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>DateTime</type>
+</CustomField>

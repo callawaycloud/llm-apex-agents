@@ -1,36 +1,39 @@
+<!-- agentLogSubscriber.html -->
 <template>
-    <lightning-card title="Agent Log List">
+    <lightning-card title="Agent Log Subscriber" icon-name="custom:custom19">
         <div class="slds-m-around_medium">
-            <template if:true={logRecords}>
-                <ul class="slds-list_vertical slds-has-dividers_bottom">
-                    <template for:each={logRecords} for:item="record">
-                        <li key={record.Id} class="slds-list_item" onclick={handleRecordClick}
-                            data-id={record.Id}>{record.LastModifiedDate}: {record.Input__c}
-                        </li>
-                    </template>
-                </ul>
-            </template>
-            <template if:false={logRecords}>
-                No Agent Log records to display.
+            <template if:true={logs}>
+                <template for:each={logs} for:item="log">
+                    <p  key={log.id}>
+                        {log.agentId} - {log.input} - {log.result} - {log.lastUpdate} - {log.error} 
+                         <!-- ON CLICK, open view of actual Log -->
+                        <button data-id={log.id} onclick={handleRecordClick}>View Log</button> 
+                    </p>
+                   
+                </template>
             </template>
         </div>
+        <template if:true={selectedLog}>
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+                     aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <header class="slds-modal__header">
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Log Details</h2>
+                    </header>
+                    <div>
+                        <lightning-input type="checkbox" label="Lock Scroll" checked onchange={handleScrollLockToggle}
+                            name="lock-scroll"></lightning-input>
+                    </div>
+                    <div class="slds-modal__content slds-p-around_medium log-scroll" id="modal-content-id-1">
+                        <pre>{selectedLog.logDetails}</pre>
+                    </div>
+                    <footer class="slds-modal__footer">
+                        <lightning-button variant="neutral" label="Close" title="Close" onclick={handleCloseModal}
+                                          icon-name="utility:close"></lightning-button>
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </template>
     </lightning-card>
-    <template if:true={selectedRecord}>
-        <lightning-card title="Agent Log Details">
-            <dl class="slds-dl_horizontal slds-text-align_left slds-box slds-m-around_medium">
-                <dt class="slds-dl_col_4 slds-text-title_caps">Agent Id:</dt>
-                <dd class="slds-dl_col_8">{selectedRecord.Agent_Id__c}</dd>
-                <dt class="slds-dl_col_4 slds-text-title_caps">Input:</dt>
-                <dd class="slds-dl_col_8">{selectedRecord.Input__c}</dd>
-                <dt class="slds-dl_col_4 slds-text-title_caps">Result:</dt>
-                <dd class="slds-dl_col_8">{selectedRecord.Result__c}</dd>
-                <dt class="slds-dl_col_4 slds-text-title_caps">Error:</dt>
-                <dd class="slds-dl_col_8">{selectedRecord.Error__c}</dd>
-                <dt class="slds-dl_col_4 slds-text-title_caps">Log:</dt>
-                <dd class="slds-dl_col_8">
-                    <pre>{selectedRecord.Log__c}</pre>
-                </dd>
-            </dl>
-        </lightning-card>
-    </template>
 </template>

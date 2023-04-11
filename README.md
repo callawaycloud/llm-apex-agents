@@ -99,6 +99,7 @@ System.enqueueJob(queuable);
 - [x] Get current user
 - [ ] Draft / Send Email
 - [ ] Post to chatter
+- [ ] merge records
 - [ ] create file/attachment
 - [ ] Search KB
 - [ ] create platform event
@@ -114,11 +115,16 @@ System.enqueueJob(queuable);
 
 - [x] Internet Search (limited)
 - [ ] Calculate
+- [ ] [Stonks](https://github.com/public-apis/public-apis#finance)
+- [ ] [Company lookup](https://api.orb-intelligence.com/docs/)
+- [ ] [news](https://github.com/public-apis/public-apis#news)
+- [ ] [link preview](LinkPreview) | [microlink](https://microlink.io/)
 
 #### GPT tools
 - [ ] Summarize text
 - [ ] Categorization
 - [ ] Sentiment Analysis
+- [ ] load/save Memory
 
 #### Other
 - [ ] User feedback
