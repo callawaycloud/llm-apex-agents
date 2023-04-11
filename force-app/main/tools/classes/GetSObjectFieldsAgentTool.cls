@@ -10,8 +10,11 @@ public class GetSObjectFieldsAgentTool implements IAgentTool {
 
   public string execute(Map<string, string> args) {
     String sobType = args.get('sobject');
-    SObjectType accountType = Schema.getGlobalDescribe().get(sobType);
-    Map<String, Schema.SObjectField> mfields = accountType.getDescribe()
+    SObjectType describeType = Schema.getGlobalDescribe().get(sobType);
+    if (describeType == null) {
+      return 'SObject not found for ' + sobType + '.';
+    }
+    Map<String, Schema.SObjectField> mfields = describeType.getDescribe()
       .fields.getMap();
     String[] fields = new List<String>{};
     for (String key : mfields.keySet()) {

@@ -73,47 +73,60 @@ System.enqueueJob(queuable);
 
 **Tested Prompts:**
 
-- :white_check_mark: 'Search for accounts containing the word "sample" and send a notification to the user with name = "charlie jonas", notifying them that they should remove the account.',
-- :white_check_mark: 'write a SOQL query that returns all billing related fields for an account. Send me a notification with the results of the query',
-- :white_check_mark: 'Get the weather tomorrow in Lander, wyoming.  Send a notification to Charlie Jonas letting him know how to dress',
-- :white_check_mark: 'Research 3 companies that offer leading edge solutions for building API.  Insert the new account with basic information about the business, but only if the account does not already exist.',
-- :white_check_mark: 'Find out how many employees work at amazon and update the account',
-- :white_check_mark:'query 3 accounts that do not have Number of Employees set.  Update the account with the number of employees from the internet.',
-- :white_check_mark: 'See if you can fill in any missing information on the amazon account. Send me a notification with the summary'
-- :white_check_mark: 'Search for accounts containing the word "sample". Create a task assigned to me with the subject "Remove Sample Account'
+- :white_check_mark: Search for accounts containing the word "sample" and send a notification to the user with name = "charlie jonas", notifying them that they should remove the account.,
+- :white_check_mark: write a SOQL query that returns all billing related fields for an account. Send me a notification with the results of the query,
+- :white_check_mark: Get the weather tomorrow in Lander, wyoming.  Send a notification to Charlie Jonas letting him know how to dress,
+- :white_check_mark: Research 3 companies that offer leading edge solutions for building API.  Insert the new account with basic information about the business, but only if the account does not already exist.,
+- :white_check_mark: Find out how many employees work at amazon and update the account,
+- :white_check_mark:query 3 accounts that do not have Number of Employees set.  Update the account with the number of employees from the internet.,
+- :white_check_mark: See if you can fill in any missing information on the amazon account. Send me a notification with the summary
+- :white_check_mark: Search for accounts containing the word "sample". Create a task assigned to me with the subject "Remove Sample Account
+- :white_check_mark: write a SOQL query to group invoice total by project name.  Send me the results in a notification
 
 
 ## :hammer_and_wrench: Tools
+
+#### Native SF Tools
 
 - [x] Search for records
 - [x] Send Custom Notification
 - [x] Get SObject Fields
 - [x] List SObjects
-- [x] Internet Search (limited)
 - [x] Write SOQL query
 - [x] Execute SOQL query
 - [x] Insert Record
 - [x] Update Record
 - [x] Get current user
 - [ ] Draft / Send Email
-- [ ] Summarize text
 - [ ] Post to chatter
 - [ ] create file/attachment
-- [ ] Calculate
 - [ ] Search KB
 - [ ] create platform event
-- [ ] Approval flow?
+- [ ] Approvals?
 - [ ] Launch flow
 - [ ] Delete flows :trollface:
 - [ ] Read Apex Class
 - [ ] Write Apex class
 - [ ] Run Apex :trollface:
 - [ ] Run Tests
+
+#### Internet/API tools
+
+- [x] Internet Search (limited)
+- [ ] Calculate
+
+#### GPT tools
+- [ ] Summarize text
+- [ ] Categorization
+- [ ] Sentiment Analysis
+
+#### Other
 - [ ] User feedback
 - [x] create & run other agents (limited)
 - [ ] ???
 
-### Custom Tools
+
+### Writing Custom Tools
 
 Creating a custom tool is easy. Just create a class that implements the IAgentTool interface and add it to the map of tools when you create the prompt.
 
@@ -151,7 +164,7 @@ Currently there is some primitive logging place to an Object call `Agent_Log__c`
 
 The easiest way to contribute at this stage is to create new "AgentTools" (PR's welcome!) and experiment to see what this thing can do.
 
-Other housekeeping:
+Other improvements:
 
 - [ ] refactor API tokens to use named credentials
 - [ ] improve observability
@@ -160,3 +173,5 @@ Other housekeeping:
 - [ ] Support for Few Shot prompts
 - [ ] Support for long term memory
 - [ ] add tests (have LWC write them)
+- [ ] use GPT-3.5 to reduce returned tokens to agent
+    - `{thought/reasoning} {action_result}` 
