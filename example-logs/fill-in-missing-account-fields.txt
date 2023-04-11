@@ -1,0 +1,194 @@
+===SYSTEM===
+You are an helpful assistent running in the Salesforce platform. You have access to Commands to help you do your job. After running a command, you will recieve the output as a response.
+
+===USER===
+Your Objective: """See if you can fill in any missing information on the amazon account. Send me a notification with the summary"""
+
+COMMANDS:
+`write_soql_statement`: Write SOQL Query, given any natural language query. Capable of finding fields and objects in the org.. Arguments: "natural_query": <Translates a Natural query to translate to a SOQL query>
+`search_internet`: Search the internet. Arguments: "query": <The search query to perform>
+`find_records`: Search of salesforce data. Arguments: "term": <The search term>,"objectType": <The SObject to search for>
+`send_notification`: Send Notification to user. Arguments: "title": <notification title>,"body": <notification message>,"to": <user id to send notification to>,"targetId": <record id this notification relates to>
+`create_records`: Inserts/Updates records into the database. Arguments: "operation": <insert|update|upsert>,"sObjectType": <The SObject API name>,"records": <String of escaped JSON array with record data (fields and values)>
+`get_fields`: Get fields metadata for a SObject. Arguments: "sobject": <API Name of the SObject>
+`list_custom_objects`: Lists Custom SObjects in the salesforce org. Arguments:
+`execute_soql`: Executes a SOQL query and returns JSON results. Arguments: "sql": <SQL to execute. May not contain any :variables>
+`get_current_user`: Gets id, name & email for the user you are interacting with. Arguments:
+
+PERFORMANCE EVALUATION:
+You must always provide a valid "command". When you are done, use the final command "exit"
+When you can complete the next step on you own, do so immediately. Use commands for things you cannot perform yourself.
+Continuously review and analyze your actions to ensure you are performing to the best of your abilities.
+Reflect on past decisions and strategies to refine your approach.
+Every command has a cost, so be smart and efficient. Aim to complete tasks in the least number of steps.
+Wait for a response from all commands before setting "complete": true.
+You should only respond in JSON format as described below.
+RESPONSE FORMAT:
+{
+"thoughts":
+{
+"text": "thought",
+"reasoning": "reasoning",
+"plan": "- short bulleted\n- list that conveys\n- long-term plan"
+},
+"internal_processing": "Result of any work you should do before running the next command",
+"command": {
+"name": "command name",
+"args":{
+"arg name": "value"
+}
+},
+"complete": "`true` when the objective has been met",
+"result": "The final answer to the objective"
+}
+
+===ASSISTANT===
+{
+"thoughts": {
+"text": "I need to find the Amazon account and check for missing information.",
+"reasoning": "To fill in any missing information, I first need to locate the Amazon account in Salesforce.",
+"plan": "- Find the Amazon account\n- Check for missing information\n- Fill in missing information\n- Send a notification with the summary"
+},
+"command": {
+"name": "find_records",
+"args": {
+"term": "Amazon",
+"objectType": "Account"
+}
+},
+"complete": false
+}
+
+===USER===
+[[{"attributes":{"type":"Account","url":"/services/data/v57.0/sobjects/Account/0018F00000NqmWoQAJ"},"Id":"0018F00000NqmWoQAJ"}]]
+
+===ASSISTANT===
+{
+"thoughts": {
+"text": "I found the Amazon account. Now I need to check for missing information.",
+"reasoning": "I need to retrieve the account details to identify any missing information.",
+"plan": "- Retrieve Amazon account details\n- Identify missing information\n- Fill in missing information\n- Send a notification with the summary"
+},
+"command": {
+"name": "execute_soql",
+"args": {
+"sql": "SELECT Id, Name, BillingStreet, BillingCity, BillingState, BillingPostalCode, BillingCountry, Phone, Website FROM Account WHERE Id = '0018F00000NqmWoQAJ'"
+}
+},
+"complete": false
+}
+
+===USER===
+[{"attributes":{"type":"Account","url":"/services/data/v57.0/sobjects/Account/0018F00000NqmWoQAJ"},"Id":"0018F00000NqmWoQAJ","Name":"Amazon Web Services (AWS)"}]
+
+===ASSISTANT===
+{
+"thoughts": {
+"text": "I have the Amazon account details, but some information is missing. I need to search the internet to find the missing information.",
+"reasoning": "To fill in the missing information, I need to search the internet for the Amazon account's address, phone number, and website.",
+"plan": "- Search the internet for Amazon's address, phone number, and website\n- Fill in missing information\n- Send a notification with the summary"
+},
+"command": {
+"name": "search_internet",
+"args": {
+"query": "Amazon headquarters address, phone number, and website"
+}
+},
+"complete": false
+}
+
+===USER===
+{"organicResults":[{"url":null,"snippet_highlighted_words":["1-206-266-1000"],"snippet":"Amazon Headquarters Info · Address: Amazon Headquarters 410 Terry Ave. · Phone Number: Call 1-206-266-1000 to reach the Amazon headquarters and corporate office."},{"url":null,"snippet_highlighted_words":["206) 266-1000"],"snippet":"Amazon corporate offices located at 410 Terry Ave. North, Seattle, WA, 98109-5210; phone (206) 266-1000."},{"url":null,"snippet_highlighted_words":["410 Terry Avenue North Seattle, WA 98109"],"snippet":"Primary Contact Vincent Duong Customer success manager 410 Terry Avenue North Seattle, WA 98109 · Secondary Contact Doug Herring CEO, Amazon consumer 410 Terry ..."},{"url":null,"snippet_highlighted_words":["headquarters"],"snippet":"We are excited to be an even bigger part of the community with the establishment of our new headquarters in the National Landing neighborhood of Arlington, ..."},{"url":null,"snippet_highlighted_words":["888) 280-4331"],"snippet":"The Amazon 24/7 customer service numbers are (888) 280-4331 for US customers and +1 (206) 922-0880 for international customers. For legal issues, you should ..."},{"url":null,"snippet_highlighted_words":["Seattle, 410 Terry Ave N"],"snippet":"Amazon is headquartered in Seattle, 410 Terry Ave N, United States, and has 240 ..."},{"url":null,"snippet_highlighted_words":["1-888-280-4331"],"snippet":"Visit the Amazon Customer Service site to find answers to common problems, use online chat, or call customer service phone number at 1-888-280-4331 for ..."}],"answer":null}
+
+===ASSISTANT===
+{
+"thoughts": {
+"text": "I found the missing information for the Amazon account. Now I need to update the account with the new information.",
+"reasoning": "I need to update the Amazon account in Salesforce with the address, phone number, and website I found.",
+"plan": "- Update Amazon account with missing information\n- Send a notification with the summary"
+},
+"command": {
+"name": "create_records",
+"args": {
+"operation": "update",
+"sObjectType": "Account",
+"records": "[{\"Id\": \"0018F00000NqmWoQAJ\", \"BillingStreet\": \"410 Terry Ave. North\", \"BillingCity\": \"Seattle\", \"BillingState\": \"WA\", \"BillingPostalCode\": \"98109-5210\", \"BillingCountry\": \"USA\", \"Phone\": \"1-206-266-1000\", \"Website\": \"https://www.amazon.com\"}]"
+}
+},
+"complete": false
+}
+
+===USER===
+New Record Ids: 0018F00000NqmWoQAJ
+
+===ASSISTANT===
+{
+"thoughts": {
+"text": "I updated the Amazon account with the missing information. Now I need to send a notification with the summary.",
+"reasoning": "I need to inform the user that the Amazon account has been updated with the missing information.",
+"plan": "- Send a notification with the summary"
+},
+"command": {
+"name": "send_notification",
+"args": {
+"title": "Amazon Account Updated",
+"body": "The Amazon account has been updated with the missing information: Address, Phone Number, and Website.",
+"to": "",
+"targetId": "0018F00000NqmWoQAJ"
+}
+},
+"complete": false
+}
+
+===USER===
+Failed to execute command: Invalid parameter value for: recipientIds
+
+===ASSISTANT===
+{
+"thoughts": {
+"text": "I need the user's ID to send the notification.",
+"reasoning": "I need to get the current user's information to send the notification.",
+"plan": "- Get current user information\n- Send a notification with the summary"
+},
+"command": {
+"name": "get_current_user",
+"args": {}
+},
+"complete": false
+}
+
+===USER===
+{"Name":"test-zodpnkyivzkc@example.com","Id":"0058F0000038OhKQAU","Email":"employees@callawaycloudconsulting.com"}
+
+===ASSISTANT===
+{
+"thoughts": {
+"text": "I have the user's ID. Now I can send the notification with the summary.",
+"reasoning": "I need to send the notification to the user with the updated Amazon account information.",
+"plan": "- Send a notification with the summary"
+},
+"command": {
+"name": "send_notification",
+"args": {
+"title": "Amazon Account Updated",
+"body": "The Amazon account has been updated with the missing information: Address, Phone Number, and Website.",
+"to": "0058F0000038OhKQAU",
+"targetId": "0018F00000NqmWoQAJ"
+}
+},
+"complete": false
+}
+
+===USER===
+Notification Sent
+
+===ASSISTANT===
+{
+"thoughts": {
+"text": "I have successfully sent the notification with the summary of the updated Amazon account.",
+"reasoning": "The user has been informed about the updated Amazon account information.",
+"plan": ""
+},
+"complete": true,
+"result": "The Amazon account has been updated with the missing information, and a notification with the summary has been sent to the user."
+}

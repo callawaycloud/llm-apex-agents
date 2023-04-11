@@ -1,0 +1,36 @@
+<template>
+    <lightning-card title="Agent Log List">
+        <div class="slds-m-around_medium">
+            <template if:true={logRecords}>
+                <ul class="slds-list_vertical slds-has-dividers_bottom">
+                    <template for:each={logRecords} for:item="record">
+                        <li key={record.Id} class="slds-list_item" onclick={handleRecordClick}
+                            data-id={record.Id}>{record.LastModifiedDate}: {record.Input__c}
+                        </li>
+                    </template>
+                </ul>
+            </template>
+            <template if:false={logRecords}>
+                No Agent Log records to display.
+            </template>
+        </div>
+    </lightning-card>
+    <template if:true={selectedRecord}>
+        <lightning-card title="Agent Log Details">
+            <dl class="slds-dl_horizontal slds-text-align_left slds-box slds-m-around_medium">
+                <dt class="slds-dl_col_4 slds-text-title_caps">Agent Id:</dt>
+                <dd class="slds-dl_col_8">{selectedRecord.Agent_Id__c}</dd>
+                <dt class="slds-dl_col_4 slds-text-title_caps">Input:</dt>
+                <dd class="slds-dl_col_8">{selectedRecord.Input__c}</dd>
+                <dt class="slds-dl_col_4 slds-text-title_caps">Result:</dt>
+                <dd class="slds-dl_col_8">{selectedRecord.Result__c}</dd>
+                <dt class="slds-dl_col_4 slds-text-title_caps">Error:</dt>
+                <dd class="slds-dl_col_8">{selectedRecord.Error__c}</dd>
+                <dt class="slds-dl_col_4 slds-text-title_caps">Log:</dt>
+                <dd class="slds-dl_col_8">
+                    <pre>{selectedRecord.Log__c}</pre>
+                </dd>
+            </dl>
+        </lightning-card>
+    </template>
+</template>

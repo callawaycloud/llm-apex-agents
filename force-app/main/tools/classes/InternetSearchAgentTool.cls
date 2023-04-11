@@ -1,6 +1,7 @@
-public class InternetSearchAgentAction implements IAgentTool {
+//Written by Charlie Jonas
+public class InternetSearchAgentTool implements IAgentTool {
   private string api_key;
-  public InternetSearchAgentAction(String api_key) {
+  public InternetSearchAgentTool(String api_key) {
     this.api_key = api_key;
   }
 
@@ -34,30 +35,18 @@ public class InternetSearchAgentAction implements IAgentTool {
 
     if (response.getStatusCode() == 200) {
       TypedResult data = (TypedResult) JSON.deserialize(
-        response.getBody(),
+        response.getBody().replace('"list":', '"items":'),
         TypedResult.class
       );
-      if (data.answer_box?.answer != null) {
-        return data.answer_box.answer;
-      }
 
-      if (data.answer_box?.snippet != null) {
-        return data.answer_box.snippet;
-      }
+      SearchReturn results = new SearchReturn();
 
-      // if (data.answer_box?.snippet_highlighted_words) {
-      //   return data.answer_box.snippet_highlighted_words[0];
-      // }
-
-      if (data.knowledge_graph?.description != null) {
-        return data.knowledge_graph.description;
-      }
-
+      results.answer = data.answer_box;
       if (data.organic_results != null && data.organic_results.size() > 0) {
-        return data.organic_results[0].snippet;
+        results.organicResults = data.organic_results;
       }
 
-      throw new SearchActionException('No results found');
+      return JSON.serialize(results);
     } else {
       throw new SearchActionException(
         'API returned status code ' + response.getStatusCode()
@@ -68,20 +57,29 @@ public class InternetSearchAgentAction implements IAgentTool {
   private class SearchActionException extends Exception {
   }
 
+  private class SearchReturn {
+    public AnswerBox answer;
+    public Result[] organicResults;
+  }
+
   private class TypedResult {
     public AnswerBox answer_box;
     public Result[] organic_results;
     public GraphResult knowledge_graph;
   }
+
   private class AnswerBox {
     public String answer;
+    public String[] items;
     public String snippet;
-    public String[] snippet_highlighted_words;
   }
+
   private class Result {
     public String snippet;
     public String[] snippet_highlighted_words;
+    public string url;
   }
+
   private class GraphResult {
     public String description;
   }

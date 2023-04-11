@@ -16,7 +16,7 @@ public class AgentUtils {
       toolDescriptions.put(
         actionKey,
         String.format(
-          '{1}: Command Key:"{0}".  Arguments: {2}',
+          '`{0}`: {1}. Arguments: {2}',
           new List<Object>{
             actionKey,
             action.getDescription(),
@@ -26,5 +26,21 @@ public class AgentUtils {
       );
     }
     return toolDescriptions;
+  }
+
+  public static string createAgentId() {
+    Blob b = Crypto.GenerateAESKey(128);
+    String h = EncodingUtil.ConvertTohex(b);
+    String guid =
+      h.SubString(0, 8) +
+      '-' +
+      h.SubString(8, 12) +
+      '-' +
+      h.SubString(12, 16) +
+      '-' +
+      h.SubString(16, 20) +
+      '-' +
+      h.substring(20);
+    return guid;
   }
 }

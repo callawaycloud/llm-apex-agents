@@ -1,7 +1,9 @@
 public class Agent {
   public interface I {
+    string getObjective();
     string getResult();
     void next();
+    Object[] getMessages();
   }
 
   public class Message {

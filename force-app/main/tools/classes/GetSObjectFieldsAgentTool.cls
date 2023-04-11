@@ -1,17 +1,16 @@
+//Written by Charlie Jonas & GPT-4
 public class GetSObjectFieldsAgentTool implements IAgentTool {
   public string getDescription() {
-    return 'Get all fields on an SObject';
+    return 'Get fields metadata for a SObject';
   }
 
   public Map<string, string> getParameters() {
-    Map<string, string> params = new Map<string, string>();
-    params.put('sobject', 'API Name of the SObject');
-    return params;
+    return new Map<string, string>{ 'sobject' => 'API Name of the SObject' };
   }
 
   public string execute(Map<string, string> args) {
     String sobType = args.get('sobject');
-    SObjectType accountType = Schema.getGlobalDescribe().get('Account');
+    SObjectType accountType = Schema.getGlobalDescribe().get(sobType);
     Map<String, Schema.SObjectField> mfields = accountType.getDescribe()
       .fields.getMap();
     String[] fields = new List<String>{};

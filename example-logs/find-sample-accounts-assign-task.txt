@@ -1,0 +1,108 @@
+===SYSTEM===
+You are an helpful assistent running in the Salesforce platform. You have access to Commands to help you do your job. After running a command, you will recieve the output as a response.
+
+===USER===
+Your Objective: """Search for accounts containing the word "sample". Create a task assigned to me with the subject "Remove Sample Account""""
+
+COMMANDS:
+`write_soql_statement`: Write SOQL Query, given any natural language query. Capable of finding fields and objects in the org.. Arguments: "natural_query": <Translates a Natural query to translate to a SOQL query>
+`search_internet`: Search the internet. Arguments: "query": <The search query to perform>
+`find_records`: Search of salesforce data. Arguments: "term": <The search term>,"objectType": <The SObject to search for>
+`send_notification`: Send Notification to user. Arguments: "title": <notification title>,"body": <notification message>,"to": <user id to send notification to>,"targetId": <record id this notification relates to>
+`create_records`: Inserts/Updates records into the database. Arguments: "operation": <insert|update|upsert>,"sObjectType": <The SObject API name>,"records": <String of escaped JSON array with record data (fields and values)>
+`get_fields`: Get fields metadata for a SObject. Arguments: "sobject": <API Name of the SObject>
+`list_custom_objects`: Lists Custom SObjects in the salesforce org. Arguments:
+`execute_soql`: Executes a SOQL query and returns JSON results. Arguments: "sql": <SQL to execute. May not contain any :variables>
+`get_current_user`: Gets id, name & email for the user you are interacting with. Arguments:
+
+PERFORMANCE EVALUATION:
+You must always provide a valid "command". When you are done, use the final command "exit"
+When you can complete the next step on you own, do so immediately. Use commands for things you cannot perform yourself.
+Continuously review and analyze your actions to ensure you are performing to the best of your abilities.
+Reflect on past decisions and strategies to refine your approach.
+Every command has a cost, so be smart and efficient. Aim to complete tasks in the least number of steps.
+Wait for a response from all commands before setting "complete": true.
+You should only respond in JSON format as described below.
+RESPONSE FORMAT:
+{
+"thoughts":
+{
+"text": "thought",
+"reasoning": "reasoning",
+"plan": "- short bulleted\n- list that conveys\n- long-term plan"
+},
+"internal_processing": "Result of any work you should do before running the next command",
+"command": {
+"name": "command name",
+"args":{
+"arg name": "value"
+}
+},
+"complete": "`true` when the objective has been met",
+"result": "The final answer to the objective"
+}
+
+===ASSISTANT===
+{
+"thoughts": {
+"text": "I need to search for accounts containing the word 'sample'.",
+"reasoning": "To find the accounts, I can use the 'find_records' command with the term 'sample' and objectType 'Account'.",
+"plan": "- Use 'find_records' command to search for accounts containing 'sample'\n- Create a task assigned to the user with the subject 'Remove Sample Account'"
+},
+"command": {
+"name": "find_records",
+"args": {
+"term": "sample",
+"objectType": "Account"
+}
+}
+}
+
+===USER===
+[[{"attributes":{"type":"Account","url":"/services/data/v57.0/sobjects/Account/0018F00000NPyLcQAL"},"Id":"0018F00000NPyLcQAL"}]]
+
+===ASSISTANT===
+{
+"thoughts": {
+"text": "I found an account containing the word 'sample'. Now I need to create a task assigned to the user with the subject 'Remove Sample Account'.",
+"reasoning": "To create the task, I can use the 'create_records' command with the operation 'insert', sObjectType 'Task', and the required fields and values.",
+"plan": "- Get the current user's information\n- Create a task assigned to the user with the subject 'Remove Sample Account'"
+},
+"command": {
+"name": "get_current_user"
+}
+}
+
+===USER===
+{"Name":"test-zodpnkyivzkc@example.com","Id":"0058F0000038OhKQAU","Email":"employees@callawaycloudconsulting.com"}
+
+===ASSISTANT===
+{
+"thoughts": {
+"text": "I have the user's information. Now I can create a task assigned to the user with the subject 'Remove Sample Account'.",
+"reasoning": "I will use the 'create_records' command with the operation 'insert', sObjectType 'Task', and the required fields and values.",
+"plan": "- Create a task assigned to the user with the subject 'Remove Sample Account'"
+},
+"command": {
+"name": "create_records",
+"args": {
+"operation": "insert",
+"sObjectType": "Task",
+"records": "[{\"Subject\": \"Remove Sample Account\", \"OwnerId\": \"0058F0000038OhKQAU\", \"WhatId\": \"0018F00000NPyLcQAL\"}]"
+}
+}
+}
+
+===USER===
+New Record Ids: 00T8F0000057h7DUAQ
+
+===ASSISTANT===
+{
+"thoughts": {
+"text": "I have successfully created a task assigned to the user with the subject 'Remove Sample Account'.",
+"reasoning": "The task has been created and assigned to the user as requested.",
+"plan": ""
+},
+"complete": true,
+"result": "A task with the subject 'Remove Sample Account' has been created and assigned to you."
+}

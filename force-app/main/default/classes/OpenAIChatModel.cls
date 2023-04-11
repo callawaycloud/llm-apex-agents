@@ -2,9 +2,9 @@ public class OpenAIChatModel implements ChatModel.I {
   private static final String ENDPOINT = 'https://api.openai.com/v1/';
 
   private string apiKey;
-  public string model = 'gpt-3.5-turbo'; // 'gpt-4' | 'gpt-3.5-turbo'
-  public Decimal tempature = 0.7;
-  public Integer maxTokens = 4000;
+  public string model = 'gpt-4'; // 'gpt-4' | 'gpt-3.5-turbo'
+  public Decimal tempature = 0.0;
+  public Integer maxTokens = 2000;
   public OpenAIChatModel(String apiKey) {
     this.apiKey = apiKey;
   }
@@ -23,12 +23,16 @@ public class OpenAIChatModel implements ChatModel.I {
     requestBody.messages = messages;
     requestBody.model = model;
     requestBody.temperature = tempature;
-    requestBody.max_tokens = maxTokens;
+    requestBody.max_tokens = maxTokens; // TODO dynamicly set this by calculating tokens
     requestBody.stream = false;
 
     request.setBody(JSON.serialize(requestBody, true));
 
     HttpResponse response = http.send(request);
+
+    // if(response.getStatusCode() == 429) {
+    //retry?
+    // }
 
     if (response.getStatusCode() == 200) {
       ChatAPICompletion results = (ChatAPICompletion) JSON.deserialize(

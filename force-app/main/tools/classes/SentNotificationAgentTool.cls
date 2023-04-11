@@ -33,6 +33,8 @@ public class SentNotificationAgentTool implements IAgentTool {
     notification.setTargetId(Userinfo.getUserId()); // target object id
 
     notification.send(new Set<String>{ to });
+    //Due to what appears to be an SF bug, this does not update the limits.getDMLOperations() count
+    AgentQueueable.FORCE_NEW_QUEUEABLE = true;
     return 'Notification Sent';
   }
 }
