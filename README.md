@@ -167,11 +167,11 @@ The easiest way to contribute at this stage is to create new "AgentTools" (PR's 
 Other improvements:
 
 - [ ] refactor API tokens to use named credentials
-- [ ] improve observability
+- [ ] improve observability (lwc component?)
 - [ ] suspend/reanimate agent
-- [ ] LWC Chat Frontend (wip)
+- [ ] LWC Chat Frontend
 - [ ] Support for Few Shot prompts
 - [ ] Support for long term memory
-- [ ] add tests (have LWC write them)
+- [ ] add tests (have agent write them)
 - [ ] use GPT-3.5 to reduce returned tokens to agent
     - `{thought/reasoning} {action_result}` 
