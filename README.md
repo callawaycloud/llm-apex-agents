@@ -16,7 +16,7 @@ An “Agent” is a technique for instilling the ability for an LLM to “Reason
 
 ## Getting Started
 
-> Run in scratch org or install to developer edition using `sfdx force:mdapi:deploy`
+> Run in scratch org or install to developer edition using `sfdx force:mdapi:deploy`, although the limitation of 5 chained queuables in these org types is a bit limiting...
 
 ### :exclamation: WARNING: THIS IS EXPERIMENTAL!
 
