@@ -15,6 +15,12 @@ export default class AgentLogDetails extends LightningModal {
     this.parseEventLog();
   }
 
+  renderedCallback() {
+    setTimeout(() => {
+      this.scrollToBottom();
+    }, 500);
+  }
+
   disconnectedCallback() {
     this.handleUnsubscribe();
   }
@@ -44,6 +50,7 @@ export default class AgentLogDetails extends LightningModal {
           .then((result) => {
             this.log = result;
             this.parseEventLog();
+            this.scrollToBottom();
           })
           .catch((e) => {
             console.error("getSingleRecord error", e);
@@ -68,8 +75,9 @@ export default class AgentLogDetails extends LightningModal {
     });
   }
 
-  get displayDataTable() {
-    return this.logs && this.isTableVisible;
+  scrollToBottom() {
+    let bottomElement = this.template.querySelector(".bottom");
+    bottomElement.scrollIntoView({ behavior: "smooth" });
   }
 
   handleClose() {
