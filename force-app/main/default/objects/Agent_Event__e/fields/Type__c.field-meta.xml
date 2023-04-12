@@ -3,7 +3,6 @@
     <fullName>Type__c</fullName>
     <description>The event type. See Agent.EventTypes enum</description>
     <externalId>false</externalId>
-    <inlineHelpText>The event type. See Agent.EventTypes enum</inlineHelpText>
     <isFilteringDisabled>false</isFilteringDisabled>
     <isNameField>false</isNameField>
     <isSortingDisabled>false</isSortingDisabled>
