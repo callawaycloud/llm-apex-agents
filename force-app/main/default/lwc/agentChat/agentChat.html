@@ -1,0 +1,16 @@
+<template>
+  <lightning-card title="Agent Chat" icon-name="standard:live_chat">
+    <lightning-button
+      label="Search"
+      icon-name="standard:live_chat"
+      slot="actions"
+      onclick={handleClick}
+    ></lightning-button>
+    <div class="slds-m-around_medium">
+      <lightning-textarea
+        label="Search when user hits the 'enter' key"
+        placeholder="Come up with a few name ideas for a cat using wordplay"
+      ></lightning-textarea>
+    </div>
+  </lightning-card>
+</template>

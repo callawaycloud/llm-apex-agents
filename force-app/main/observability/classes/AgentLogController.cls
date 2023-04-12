@@ -1,6 +1,6 @@
 //Written by GPT-4
 public without sharing class AgentLogController {
-  @AuraEnabled(cacheable=true)
+  @AuraEnabled
   public static List<Agent_Log__c> getAgentLogRecords() {
     return [
       SELECT
@@ -78,7 +78,7 @@ public without sharing class AgentLogController {
 }
 
 /** Register pushtopic
- 
+
   delete [SELECT Id FROM PushTopic WHERE Name = 'Agent_Log_Channel'];
   PushTopic agentLogPushTopic = new PushTopic();
   agentLogPushTopic.Name = 'Agent_Log_Channel';

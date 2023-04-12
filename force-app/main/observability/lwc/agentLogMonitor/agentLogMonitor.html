@@ -1,39 +1,16 @@
-<!-- agentLogSubscriber.html -->
 <template>
-    <lightning-card title="Agent Log Subscriber" icon-name="custom:custom19">
-        <div class="slds-m-around_medium">
-            <template if:true={logs}>
-                <template for:each={logs} for:item="log">
-                    <p  key={log.id}>
-                        {log.agentId} - {log.input} - {log.result} - {log.lastUpdate} - {log.error} 
-                         <!-- ON CLICK, open view of actual Log -->
-                        <button data-id={log.id} onclick={handleRecordClick}>View Log</button> 
-                    </p>
-                   
-                </template>
-            </template>
-        </div>
-        <template if:true={selectedLog}>
-            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
-                     aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
-                <div class="slds-modal__container">
-                    <header class="slds-modal__header">
-                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Log Details</h2>
-                    </header>
-                    <div>
-                        <lightning-input type="checkbox" label="Lock Scroll" checked onchange={handleScrollLockToggle}
-                            name="lock-scroll"></lightning-input>
-                    </div>
-                    <div class="slds-modal__content slds-p-around_medium log-scroll" id="modal-content-id-1">
-                        <pre>{selectedLog.logDetails}</pre>
-                    </div>
-                    <footer class="slds-modal__footer">
-                        <lightning-button variant="neutral" label="Close" title="Close" onclick={handleCloseModal}
-                                          icon-name="utility:close"></lightning-button>
-                    </footer>
-                </div>
-            </section>
-            <div class="slds-backdrop slds-backdrop_open"></div>
-        </template>
-    </lightning-card>
+  <lightning-card title="Agent Log Subscriber" icon-name="custom:custom19">
+    <div class="slds-m-around_medium">
+      <template if:true={logs}>
+        <lightning-datatable
+          key-field="Id"
+          data={logs}
+          columns={columns}
+          onrowaction={handleRowAction}
+          hide-checkbox-column="true"
+        >
+        </lightning-datatable>
+      </template>
+    </div>
+  </lightning-card>
 </template>
