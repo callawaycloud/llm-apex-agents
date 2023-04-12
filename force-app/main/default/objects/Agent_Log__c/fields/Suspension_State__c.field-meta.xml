@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Suspension_State__c</fullName>
+    <description>State that can be used to rehydrate the agent after it has been suspended</description>
+    <externalId>false</externalId>
+    <inlineHelpText>State that can be used to rehydrate the agent after it has been suspended</inlineHelpText>
+    <label>Suspension_State</label>
+    <length>131072</length>
+    <trackTrending>false</trackTrending>
+    <type>LongTextArea</type>
+    <visibleLines>3</visibleLines>
+</CustomField>
