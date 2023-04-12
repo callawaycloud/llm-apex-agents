@@ -1,131 +1,134 @@
-// agentLogSubscriber.js
 import { LightningElement, track } from "lwc";
-import {
-  subscribe,
-  unsubscribe,
-  onError,
-  setDebugFlag,
-  isEmpEnabled
-} from "lightning/empApi";
+import CurrentUserId from "@salesforce/user/Id";
+import { subscribe, unsubscribe } from "lightning/empApi";
+
+// LWCs
+import LogDetailsModal from "c/agentLogDetails";
+
+// Apex methods
 import getAgentLogRecords from "@salesforce/apex/AgentLogController.getAgentLogRecords";
 import getSingleRecord from "@salesforce/apex/AgentLogController.getSingleRecord";
 
+// Datatable
+const actions = [{ label: "View", name: "view" }];
+
+const columns = [
+  { label: "Input", fieldName: "Input__c" },
+  {
+    label: "Last Updated",
+    fieldName: "Last_Agent_Update__c",
+    type: "date",
+    typeAttributes: {
+      month: "2-digit",
+      day: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit"
+    }
+  },
+  {
+    type: "action",
+    typeAttributes: { rowActions: actions }
+  }
+];
+
 export default class AgentLogSubscriber extends LightningElement {
   @track logs = [];
-  @track selectedLog;
-  scrollLock = true;
+  columns = columns;
   subscription = {};
 
-  // Initialize the component
-  async connectedCallback() {
+  connectedCallback() {
     this.handleSubscribe();
 
-    // preload last 10 logs
-    this.logs = (await getAgentLogRecords()).map(getLogRecord);
+    getAgentLogRecords()
+      .then((agentLogs) => {
+        this.logs = agentLogs;
+      })
+      .catch((e) => console.error(e));
   }
 
-  renderedCallback() {
-    //if a detail is open, lock the scroll to the bottom so you can see updates
-    const logContent = this.template.querySelector(".log-scroll");
-    if (this.selectedLog && logContent && this.scrollLock) {
-      scrollToBottom(logContent);
-    }
-  }
-
-  // Cleanup the component
   disconnectedCallback() {
     this.handleUnsubscribe();
   }
 
-  handleRecordClick(event) {
-    const logId = event.currentTarget.dataset.id;
-    this.selectedLog = this.logs.find((log) => log.id === logId);
-  }
-
-  handleCloseModal() {
-    this.selectedLog = null;
-    this.scrollLock = true;
-  }
-
-  handleScrollLockToggle(event) {
-    this.scrollLock = event.target.checked;
-    if (this.scrollLock) {
-      this.scrollToBottom();
-    }
-  }
-
-  // Subscribe to the PushTopic
   handleSubscribe() {
     const messageCallback = ({ data }) => {
       try {
-        getSingleRecord({ id: data.sobject.Id })
+        console.log("subscription data", JSON.parse(JSON.stringify(data)));
+
+        // Only track agent logs of current user
+        if (CurrentUserId !== data.payload.CreatedById) {
+          return;
+        }
+
+        getSingleRecord({ id: data.payload.Agent_Log_Id__c })
           .then((log) => {
-            const existingRecord = this.logs.find((it) => it.id === log.Id);
-            const newRecord = getLogRecord(log);
-
-            if (existingRecord) {
-              console.log("update existing record");
-              for (const key in newRecord) {
-                if (newRecord.hasOwnProperty(key)) {
-                  existingRecord[key] = newRecord[key];
-                }
-              }
-            } else {
-              console.log("add new record");
-              this.logs.push(newRecord);
-            }
-
-            //sort by lastUpdate desc
-            this.logs.sort(
-              (a, b) =>
-                new Date(b.lastUpdate || 0) - new Date(a.lastUpdate || 0)
+            const existingLogIndex = this.logs.findIndex(
+              (element) => element.Id === log.Id
             );
 
-            // if(this.selectedLog && this.selectedLog.id === newRecord.id){
-            //     console.log('detailed element updated');
-            //     const logContent = this.template.querySelector('#modal-content-id-1');
-            //     if(logContent){
-            //         scrollToBottom(logContent);
-            //     }else{
-            //         console.error('logContent not found');
-            //     }
+            if (existingLogIndex !== -1) {
+              this.logs[existingLogIndex] = log;
+            } else {
+              this.logs.push(log);
+            }
 
-            // }
+            this.logs.sort(
+              (a, b) =>
+                new Date(b.Last_Agent_Update__c || 0) -
+                new Date(a.Last_Agent_Update__c || 0)
+            );
+
+            // LWC data binding doesn't detect a call to push.
+            // Basically kicking it to refresh right here.
+            // Keeping the cap at 10 agent logs here so it works out.
+            this.logs = this.logs.slice(0, 10);
           })
-          .catch(console.error);
+          .catch((e) => {
+            console.error("getSingleRecord error", e);
+          });
       } catch (e) {
-        console.error("err", e);
+        console.error("subscription err", e);
       }
     };
 
-    subscribe("/topic/Agent_Log_Channel", -1, messageCallback).then(
+    subscribe("/event/Agent_Log_Event__e", -1, messageCallback).then(
       (response) => {
-        console.log("Successfully subscribed to PushTopic:", response.channel);
+        console.log(
+          "Subscription request sent to: ",
+          JSON.stringify(response.channel)
+        );
         this.subscription = response;
       }
     );
   }
 
-  // Unsubscribe from the PushTopic
   handleUnsubscribe() {
     unsubscribe(this.subscription, (response) => {
       console.log("Unsubscribed from channel:", response.subscription);
     });
   }
-}
 
-function getLogRecord(log) {
-  return {
-    id: log.Id,
-    agentId: log.Agent_Id__c,
-    input: log.Input__c,
-    error: log.Error__c,
-    result: log.Result__c,
-    logDetails: log.Log__c,
-    lastUpdate: log.Last_Agent_Update__c
-  };
-}
+  handleRowAction(event) {
+    const actionName = event.detail.action.name;
+    const row = event.detail.row;
 
-function scrollToBottom(element) {
-  element.scrollTop = element.scrollHeight;
+    switch (actionName) {
+      case "view":
+        this.viewLogDetails(row);
+        break;
+      default:
+    }
+  }
+
+  async viewLogDetails(log) {
+    const result = await LogDetailsModal.open({
+      size: "medium",
+      description: "Accessible description of modal's purpose",
+      log: log
+    });
+    // if modal closed with X button, promise returns result = 'undefined'
+    // if modal closed with OK button, promise returns result = [data]
+    console.log("modal response", result);
+  }
 }
