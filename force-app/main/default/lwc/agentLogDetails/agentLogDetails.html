@@ -1,59 +1,105 @@
 <template>
   <lightning-modal-header label={log.Agent_Id__c}></lightning-modal-header>
   <lightning-modal-body>
-    <div class="c-container">
-      <lightning-layout>
-        <lightning-layout-item padding="around-small">
-          <div class="header-column">
-            <p class="field-title" title="Field 2">Input</p>
-            <p>{log.Input__c}</p>
-          </div>
-        </lightning-layout-item>
-        <lightning-layout-item padding="around-small">
-          <div class="header-column">
-            <p class="field-title" title="Field 3">Result</p>
-            <p>{log.Result__c}</p>
-          </div>
-        </lightning-layout-item>
-        <lightning-layout-item padding="around-small">
-          <div class="header-column">
-            <p class="field-title" title="Field 4">Error</p>
-            <p>{log.Error__c}</p>
-          </div>
-        </lightning-layout-item>
-        <lightning-layout-item padding="around-small">
-          <div class="header-column">
-            <p class="field-title" title="Field 1">Event Count</p>
-            <p>{eventLog.length}</p>
-          </div>
-        </lightning-layout-item>
-      </lightning-layout>
-    </div>
-
-    <h1>Event Log</h1>
-    <ul class="slds-has-dividers_bottom-space">
-      <template for:each={eventLog} for:item="event">
-        <li key={event.id} class="slds-item">
-          <div class="slds-card">
-            <div class="slds-p-around_medium">
-              <ul class="slds-list_horizontal slds-has-dividers_right">
-                <li class="slds-item">
-                  <lightning-badge label={event.eventType}></lightning-badge>
-                </li>
-                <li class="slds-item">{event.timestamp}</li>
-              </ul>
+    <div class="slds-grid slds-gutters slds-wrap">
+      <div class="slds-col slds-size_1-of-1">
+        <div class="slds-grid slds-gutters slds-wrap slds-m-bottom_medium">
+          <div class="slds-col slds-size_1-of-4">
+            <label class="slds-form-element__label" for="input">Input</label>
+            <div class="slds-form-element__control">
+              <lightning-formatted-text
+                id="input"
+                value={log.Input__c}
+              ></lightning-formatted-text>
             </div>
           </div>
-          <div class="slds-card">
-            <pre>
-              <code>
-                <lightning-formatted-text value={event.data} ></lightning-formatted-text>
-              </code>
-            </pre>
+          <div class="slds-col slds-size_1-of-4">
+            <label class="slds-form-element__label" for="result">Result</label>
+            <div class="slds-form-element__control">
+              <lightning-formatted-text
+                id="result"
+                value={log.Result__c}
+              ></lightning-formatted-text>
+            </div>
           </div>
-        </li>
-      </template>
-    </ul>
+          <div class="slds-col slds-size_1-of-4">
+            <label class="slds-form-element__label" for="error">Error</label>
+            <div class="slds-form-element__control">
+              <lightning-formatted-text
+                id="error"
+                value={log.Error__c}
+              ></lightning-formatted-text>
+            </div>
+          </div>
+          <div class="slds-col slds-size_1-of-4">
+            <label class="slds-form-element__label" for="eventCount"
+              >Event Count</label
+            >
+            <div class="slds-form-element__control">
+              <lightning-formatted-text
+                id="eventCount"
+                value={eventLog.length}
+              ></lightning-formatted-text>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="slds-col slds-size_1-of-1">
+        <template for:each={eventLog} for:item="event">
+          <div class="slds-page-header slds-m-bottom_medium" key={event.id}>
+            <div class="slds-page-header__row">
+              <div class="slds-page-header__col-title">
+                <div class="slds-media">
+                  <!-- <div class="slds-media__figure">
+                    <span
+                      class="slds-icon_container slds-icon-standard-opportunity"
+                      title="opportunity"
+                      ><svg
+                        class="slds-icon slds-page-header__icon"
+                        aria-hidden="true"
+                      >
+                        <use
+                          xlink:href="/assets/icons/standard-sprite/svg/symbols.svg#opportunity"
+                        ></use></svg
+                      ><span class="slds-assistive-text"
+                        >opportunity</span
+                      ></span
+                    >
+                  </div> -->
+                  <div class="slds-media__body">
+                    <div class="slds-page-header__name">
+                      <div class="slds-page-header__name-title">
+                        <lightning-badge
+                          label={event.eventType}
+                          class="slds-p-left_none slds-p-right_small"
+                        ></lightning-badge>
+                        •
+                        <lightning-formatted-date-time
+                          class="slds-p-left_small"
+                          value={event.timestamp}
+                          year="numeric"
+                          month="numeric"
+                          day="numeric"
+                          hour="2-digit"
+                          minute="2-digit"
+                          time-zone-name="short"
+                        ></lightning-formatted-date-time>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="slds-page-header__row slds-page-header__row_gutters">
+              <div class="slds-page-header__col-details">
+                <div class="slds-page-header__detail-row">{event.data}</div>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
   </lightning-modal-body>
   <lightning-modal-footer>
     <lightning-button label="Close" onclick={handleClose}></lightning-button>
