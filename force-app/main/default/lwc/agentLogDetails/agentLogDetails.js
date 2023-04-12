@@ -39,7 +39,7 @@ export default class AgentLogDetails extends LightningModal {
         getSingleRecord({ agentId: data.payload.Agent_Id__c })
           .then((result) => {
             this.log = result;
-            this.eventLog = JSON.parse(this.log.Events__c);
+            this.parseEventLog();
           })
           .catch((e) => {
             console.error("getSingleRecord error", e);
