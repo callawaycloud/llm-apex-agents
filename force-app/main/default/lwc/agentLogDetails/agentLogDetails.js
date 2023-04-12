@@ -20,6 +20,10 @@ export default class AgentLogDetails extends LightningModal {
   }
 
   parseEventLog() {
+    if (!this.log.Events__c) {
+      return;
+    }
+
     this.eventLog = JSON.parse(this.log.Events__c).map((it) => ({
       ...it,
       data: JSON.parse(it.data)
