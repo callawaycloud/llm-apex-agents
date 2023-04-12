@@ -10,6 +10,7 @@ public without sharing class AgentLogController {
         Result__c,
         Error__c,
         Log__c,
+        Events__c,
         Last_Agent_Update__c
       FROM Agent_Log__c
       ORDER BY Last_Agent_Update__c DESC NULLS LAST
@@ -18,7 +19,7 @@ public without sharing class AgentLogController {
   }
 
   @AuraEnabled
-  public static Agent_Log__c getSingleRecord(Id id) {
+  public static Agent_Log__c getSingleRecord(String agentId) {
     Agent_Log__c log = [
       SELECT
         Id,
@@ -27,9 +28,10 @@ public without sharing class AgentLogController {
         Result__c,
         Error__c,
         Log__c,
+        Events__c,
         Last_Agent_Update__c
       FROM Agent_Log__c
-      WHERE Id = :id
+      WHERE Agent_Id__c = :agentId
     ];
     return log;
   }
@@ -37,27 +39,11 @@ public without sharing class AgentLogController {
   // Run an agent (in it's entirety) for a given objective
   @AuraEnabled
   public static void runAgent(string objective) {
-    OpenAIChatModel chatLLM = new OpenAIChatModel(
-      'TODO: APIKEY NEEDS TO BE MOVED TO NAMED CRED BEFORE THIS CAN WORK HERE'
-    );
+    OpenAIChatModel chatLLM = new OpenAIChatModel();
 
-    SpawnAgentTool agentSpawner = new SpawnAgentTool(
-      'Write SOQL Query, given any natural language query. Capable of finding fields and objects in the org.',
-      new Map<String, string>{
-        'natural_query' => 'Translates a Natural query to translate to a SOQL query'
-      },
-      chatLLM,
-      new Map<String, IAgentTool>{
-        'get_fields' => new GetSObjectFieldsAgentTool(),
-        'list_custom_objects' => new ListSObjectAgentTool()
-      }
-    );
+    chatLLM.model = 'gpt-3.5-turbo';
 
     Map<String, IAgentTool> tools = new Map<String, IAgentTool>{
-      'write_soql_statement' => agentSpawner,
-      'search_internet' => new InternetSearchAgentTool(
-        'TODO: APIKEY NEEDS TO BE MOVED TO NAMED CRED BEFORE THIS CAN WORK HERE'
-      ),
       'find_records' => new SOSLSearchAgentTool(),
       'send_notification' => new SentNotificationAgentTool(
         '0ML8F000000CgTeWAK' // custom label? Or just query a random notification type
@@ -70,6 +56,8 @@ public without sharing class AgentLogController {
     };
     ReActZeroShotChatPrompt prompt = new ReActZeroShotChatPrompt(tools);
     ReActChatAgent agent = new ReActChatAgent(objective, prompt, chatLLM);
+    AgentEventProducer evtProd = new AgentEventProducer(agent.getId());
+    agent.onEvents = evtProd;
 
     //run
     AgentQueueable queuable = new AgentQueueable(agent);

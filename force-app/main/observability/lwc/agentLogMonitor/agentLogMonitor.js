@@ -44,7 +44,7 @@ export default class AgentLogSubscriber extends LightningElement {
       .then((agentLogs) => {
         this.logs = agentLogs;
       })
-      .catch((e) => console.error(e));
+      .catch(console.error);
   }
 
   disconnectedCallback() {
@@ -61,7 +61,9 @@ export default class AgentLogSubscriber extends LightningElement {
           return;
         }
 
-        getSingleRecord({ id: data.payload.Agent_Log_Id__c })
+        console.log("refreshing data for ", data.payload.Agent_Id__c);
+
+        getSingleRecord({ agentId: data.payload.Agent_Id__c })
           .then((log) => {
             const existingLogIndex = this.logs.findIndex(
               (element) => element.Id === log.Id
@@ -92,15 +94,13 @@ export default class AgentLogSubscriber extends LightningElement {
       }
     };
 
-    subscribe("/event/Agent_Log_Event__e", -1, messageCallback).then(
-      (response) => {
-        console.log(
-          "Subscription request sent to: ",
-          JSON.stringify(response.channel)
-        );
-        this.subscription = response;
-      }
-    );
+    subscribe("/event/Agent_Event__e", -1, messageCallback).then((response) => {
+      console.log(
+        "Subscription request sent to: ",
+        JSON.stringify(response.channel)
+      );
+      this.subscription = response;
+    });
   }
 
   handleUnsubscribe() {
@@ -122,6 +122,7 @@ export default class AgentLogSubscriber extends LightningElement {
   }
 
   async viewLogDetails(log) {
+    console.log("opening details", JSON.stringify(log));
     const result = await LogDetailsModal.open({
       size: "medium",
       description: "Accessible description of modal's purpose",

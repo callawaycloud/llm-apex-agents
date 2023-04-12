@@ -1,7 +1,59 @@
 <template>
-  <lightning-modal-header label={log.Input__c}></lightning-modal-header>
+  <lightning-modal-header label={log.Agent_Id__c}></lightning-modal-header>
   <lightning-modal-body>
-    <lightning-formatted-text value={log.Log__c}></lightning-formatted-text>
+    <div class="c-container">
+      <lightning-layout>
+        <lightning-layout-item padding="around-small">
+          <div class="header-column">
+            <p class="field-title" title="Field 2">Input</p>
+            <p>{log.Input__c}</p>
+          </div>
+        </lightning-layout-item>
+        <lightning-layout-item padding="around-small">
+          <div class="header-column">
+            <p class="field-title" title="Field 3">Result</p>
+            <p>{log.Result__c}</p>
+          </div>
+        </lightning-layout-item>
+        <lightning-layout-item padding="around-small">
+          <div class="header-column">
+            <p class="field-title" title="Field 4">Error</p>
+            <p>{log.Error__c}</p>
+          </div>
+        </lightning-layout-item>
+        <lightning-layout-item padding="around-small">
+          <div class="header-column">
+            <p class="field-title" title="Field 1">Event Count</p>
+            <p>{eventLog.length}</p>
+          </div>
+        </lightning-layout-item>
+      </lightning-layout>
+    </div>
+
+    <h1>Event Log</h1>
+    <ul class="slds-has-dividers_bottom-space">
+      <template for:each={eventLog} for:item="event">
+        <li key={event.id} class="slds-item">
+          <div class="slds-card">
+            <div class="slds-p-around_medium">
+              <ul class="slds-list_horizontal slds-has-dividers_right">
+                <li class="slds-item">
+                  <lightning-badge label={event.eventType}></lightning-badge>
+                </li>
+                <li class="slds-item">{event.timestamp}</li>
+              </ul>
+            </div>
+          </div>
+          <div class="slds-card">
+            <pre>
+              <code>
+                <lightning-formatted-text value={event.data} ></lightning-formatted-text>
+              </code>
+            </pre>
+          </div>
+        </li>
+      </template>
+    </ul>
   </lightning-modal-body>
   <lightning-modal-footer>
     <lightning-button label="Close" onclick={handleClose}></lightning-button>

@@ -30,7 +30,7 @@ public class SentNotificationAgentTool implements IAgentTool {
     notification.setSenderId(Userinfo.getUserId());
     notification.setNotificationTypeId(this.notificationTypeId);
 
-    notification.setTargetId(targetId); // TODO need this to pass in
+    notification.setTargetId(targetId);
 
     notification.send(new Set<String>{ to });
     //Due to what appears to be an SF bug, this does not update the limits.getDMLOperations() count

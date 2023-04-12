@@ -8,13 +8,22 @@ import getSingleRecord from "@salesforce/apex/AgentLogController.getSingleRecord
 
 export default class AgentLogDetails extends LightningModal {
   @api log;
+  eventLog = [];
 
   connectedCallback() {
     this.handleSubscribe();
+    this.parseEventLog();
   }
 
   disconnectedCallback() {
     this.handleUnsubscribe();
+  }
+
+  parseEventLog() {
+    this.eventLog = JSON.parse(this.log.Events__c).map((it) => ({
+      ...it,
+      data: JSON.parse(it.data)
+    }));
   }
 
   handleSubscribe() {
@@ -27,9 +36,10 @@ export default class AgentLogDetails extends LightningModal {
           return;
         }
 
-        getSingleRecord({ id: data.payload.Agent_Log_Id__c })
-          .then((log) => {
-            this.log = log;
+        getSingleRecord({ agentId: data.payload.Agent_Id__c })
+          .then((result) => {
+            this.log = result;
+            this.eventLog = JSON.parse(this.log.Events__c);
           })
           .catch((e) => {
             console.error("getSingleRecord error", e);
@@ -39,15 +49,13 @@ export default class AgentLogDetails extends LightningModal {
       }
     };
 
-    subscribe("/event/Agent_Log_Event__e", -1, messageCallback).then(
-      (response) => {
-        console.log(
-          "Subscription request sent to: ",
-          JSON.stringify(response.channel)
-        );
-        this.subscription = response;
-      }
-    );
+    subscribe("/event/Agent_Event__e", -1, messageCallback).then((response) => {
+      console.log(
+        "Subscription request sent to: ",
+        JSON.stringify(response.channel)
+      );
+      this.subscription = response;
+    });
   }
 
   handleUnsubscribe() {

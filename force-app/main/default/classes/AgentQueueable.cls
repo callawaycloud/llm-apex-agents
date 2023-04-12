@@ -5,22 +5,12 @@ public class AgentQueueable implements Queueable, Database.AllowsCallouts {
   public static boolean FORCE_NEW_QUEUEABLE = false;
 
   private Agent.I agent;
-  private Agent_Log__c log;
   public AgentQueueable(Agent.I agent) {
     this.agent = agent;
-    this.log = new Agent_Log__c(
-      Input__c = agent.getObjective(),
-      Agent_Id__c = AgentUtils.createAgentId()
-    );
-  }
-
-  public AgentQueueable(Agent.I agent, Agent_Log__c log) {
-    this.agent = agent;
-    this.log = log;
   }
 
   public void execute(QueueableContext context) {
-    LoggingFinalizer logger = new LoggingFinalizer(this.log);
+    LoggingFinalizer logger = new LoggingFinalizer(this.agent);
     System.attachFinalizer(logger);
 
     Long calloutMs = 0;
@@ -37,59 +27,46 @@ public class AgentQueueable implements Queueable, Database.AllowsCallouts {
       agent.next();
       Long f = System.currentTimeMillis();
       calloutMs += (f - s);
-      logger.setLog(agent.getMessages());
     }
 
     if (agent.getResult() == null) {
-      System.enqueueJob(new AgentQueueable(agent, logger.logRecord));
-    } else {
-      logger.setResult(agent.getResult());
+      System.enqueueJob(new AgentQueueable(agent));
     }
   }
 
+  /** Dump the Agent State so we can recover */
   private class LoggingFinalizer implements Finalizer {
     // internal log buffer
-    public Agent_Log__c logRecord;
+    public Agent.I agent;
 
-    public LoggingFinalizer(Agent_Log__c log) {
-      logRecord = log;
+    public LoggingFinalizer(Agent.I agent) {
+      this.agent = agent;
     }
 
+    /** Store the suspended state if:
+     * - The queueable has failed
+     * - The agent has completed
+     */
     public void execute(FinalizerContext ctx) {
       // Commit the buffer
       System.Debug('committing log records to database');
 
       if (ctx.getResult() == ParentJobResult.UNHANDLED_EXCEPTION) {
-        logRecord.Error__c =
-          ctx.getException().getMessage() +
-          '\n' +
-          ctx.getException().getStackTraceString();
+        Agent_Log__c log = new Agent_Log__c(
+          Agent_Id__c = agent.getId(),
+          Error__c = ctx.getException().getMessage(),
+          Suspension_State__c = JSON.serialize(agent.suspend())
+        );
+        upsert log Agent_Id__c;
       }
-      upsert logRecord Agent_Id__c;
-    }
 
-    public void setResult(string result) {
-      logRecord.Result__c = result;
-    }
-
-    public void setLog(Object[] messages) {
-      String log = '';
-      if (messages instanceof ChatModel.Message[]) {
-        for (ChatModel.Message message : (ChatModel.Message[]) messages) {
-          log +=
-            '===' +
-            message.role?.toUpperCase() +
-            '===\n' +
-            message.content +
-            '\n\n';
-        }
-      } else {
-        for (Object message : messages) {
-          log += JSON.serialize(message);
-        }
+      if (agent.getResult() != null) {
+        Agent_Log__c log = new Agent_Log__c(
+          Agent_Id__c = agent.getId(),
+          Suspension_State__c = JSON.serialize(agent.suspend())
+        );
+        upsert log Agent_Id__c;
       }
-      logRecord.Log__c = log;
-      logRecord.Last_Agent_Update__c = System.now();
     }
   }
 }

@@ -5,14 +5,32 @@ public class ReActZeroShotChatPrompt implements Prompt.IReAct {
     this.tools = tools;
   }
 
+  private Map<String, Object> deserialize(String agentMessage) {
+    if (!agentMessage.startsWith('{')) {
+      Integer startIndex = agentMessage.indexOf('{');
+      Integer endIndex = agentMessage.lastIndexOf('}');
+      if (startIndex == -1 || endIndex == -1) {
+        throw new Agent.ResponseException(
+          'Your response must be JSON and match the provided format'
+        );
+      }
+      agentMessage = agentMessage.substring(startIndex, endIndex + 1);
+    }
+
+    try {
+      return (Map<String, Object>) JSON.deserializeUntyped(agentMessage);
+    } catch (Exception e) {
+      throw new Agent.ResponseException(
+        'Your response must be JSON and match the provided format'
+      );
+    }
+  }
+
   public Agent.Message parseAgentMessage(String agentMessage) {
     try {
       Agent.Message msg = new Agent.Message();
 
-      Map<String, Object> agentResponse = (Map<String, Object>) JSON.deserializeUntyped(
-        agentMessage
-      );
-
+      Map<String, Object> agentResponse = deserialize(agentMessage);
       Object complete = agentResponse.get('complete');
       Object result = agentResponse.get('result');
 

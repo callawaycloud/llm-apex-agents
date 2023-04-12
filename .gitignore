@@ -40,3 +40,5 @@ $RECYCLE.BIN/
 
 # Local environment variables
 .env
+
+private.apex
