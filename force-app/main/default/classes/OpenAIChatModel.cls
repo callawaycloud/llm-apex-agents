@@ -5,17 +5,15 @@ public class OpenAIChatModel implements ChatModel.I {
   public string model = 'gpt-4'; // 'gpt-4' | 'gpt-3.5-turbo'
   public Decimal tempature = 0.0;
   public Integer maxTokens = 2000;
-  public OpenAIChatModel(String apiKey) {
-    this.apiKey = apiKey;
-  }
+  public string namedCrediential = 'OpenAI';
 
   public String chat(ChatModel.Message[] messages) {
     Http http = new Http();
     HttpRequest request = new HttpRequest();
 
-    request.setEndpoint(ENDPOINT + 'chat/completions');
+    request.setEndpoint('callout:' + namedCrediential + '/chat/completions');
     request.setHeader('Content-Type', 'application/json');
-    request.setHeader('Authorization', 'Bearer ' + apiKey);
+    request.setHeader('Authorization', 'Bearer {!$Credential.OpenAI.API_KEY}');
     request.setMethod('POST');
     request.setTimeout(120000);
 

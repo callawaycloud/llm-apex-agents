@@ -6,6 +6,19 @@ Run Large Language Model (GPT) agents in Salesforce apex.
 
 An “Agent” is a technique for instilling the ability for an LLM to “Reason” and take “Action”. This approach is introduced by the [ReAct Paper](https://arxiv.org/pdf/2210.03629.pdf) (Reason → Act) and used in popular libraries like [langchain](https://github.com/hwchase17/langchain) and [auto-gpt](https://github.com/Torantulino/Auto-GPT).
 
+
+**Tested Prompts:**
+
+- :white_check_mark: `Search for accounts containing the word "sample" and send a notification to the user with name = "charlie jonas", notifying them that they should remove the account.`
+- :white_check_mark: `write a SOQL query that returns all billing related fields for an account. Send me a notification with the results of the query`
+- :white_check_mark: `Get the weather tomorrow in Lander, wyoming.  Send a notification to Charlie Jonas letting him know how to dress`
+- :white_check_mark: `Research 3 companies that offer leading edge solutions for building API.  Insert the new account with basic information about the business, but only if the account does not already exist.`
+- :white_check_mark: `Find out how many employees work at amazon and update the account`
+- :white_check_mark: `query 3 accounts that do not have Number of Employees set.  Update the account with the number of employees from the internet.`
+- :white_check_mark: `See if you can fill in any missing information on the amazon account. Send me a notification with the summary`
+- :white_check_mark: `Search for accounts containing the word "sample". Create a task assigned to me with the subject "Remove Sample Account`
+- :white_check_mark: `write a SOQL query to group invoice total by project name.  Send me the results in a notification`
+
 ## Library Terminology
 
 - `Model`: LLM/GTP model. Currently only OpenAI GPT Completion & Chat models are supported.
@@ -16,7 +29,17 @@ An “Agent” is a technique for instilling the ability for an LLM to “Reason
 
 ## Getting Started
 
-> Run in scratch org or install to developer edition using `sfdx force:mdapi:deploy`, although the limitation of 5 chained queuables in these org types is a bit limiting...
+1. install in a scratch to developer edition using `sfdx force:mdapi:deploy`
+
+NOTE: Scratch & developer orgs have a limit of 5 chained queuable, which will limit how much work the agent can do.
+
+2. Assign yourself to the `Apex Agent` permission set
+
+2. Create a `NamedCredential` for OpenAI
+- Add `Permission Set Mapping` with value of `API_KEY`
+
+NOTE: Some tools might have their own setup requirements, which will be documented in the class.  EG `InternetSearchAgentTool` requires a SERP API / Named credential.
+
 
 ### :exclamation: WARNING: THIS IS EXPERIMENTAL!
 
@@ -70,17 +93,7 @@ AgentQueueable queuable = new AgentQueueable(agent);
 System.enqueueJob(queuable);
 ```
 
-**Tested Prompts:**
 
-- :white_check_mark: `Search for accounts containing the word "sample" and send a notification to the user with name = "charlie jonas", notifying them that they should remove the account.`
-- :white_check_mark: `write a SOQL query that returns all billing related fields for an account. Send me a notification with the results of the query`
-- :white_check_mark: `Get the weather tomorrow in Lander, wyoming.  Send a notification to Charlie Jonas letting him know how to dress`
-- :white_check_mark: `Research 3 companies that offer leading edge solutions for building API.  Insert the new account with basic information about the business, but only if the account does not already exist.`
-- :white_check_mark: `Find out how many employees work at amazon and update the account`
-- :white_check_mark: `query 3 accounts that do not have Number of Employees set.  Update the account with the number of employees from the internet.`
-- :white_check_mark: `See if you can fill in any missing information on the amazon account. Send me a notification with the summary`
-- :white_check_mark: `Search for accounts containing the word "sample". Create a task assigned to me with the subject "Remove Sample Account`
-- :white_check_mark: `write a SOQL query to group invoice total by project name.  Send me the results in a notification`
 
 
 ## :hammer_and_wrench: Tools
