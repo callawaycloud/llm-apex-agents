@@ -40,7 +40,7 @@ public class ReActChatAgent implements Agent.I {
   // Constructor for completion model
   public ReActChatAgent(
     String objective,
-    Prompt.ICompletionReAct prompt, // refactor to PromptManager
+    Prompt.ICompletionReAct prompt,
     CompletionModel.I completionModel
   ) {
     this(
@@ -58,12 +58,8 @@ public class ReActChatAgent implements Agent.I {
     return id;
   }
 
-  private class ChatAgentState {
-    public String objective;
-    public String result;
-    public Integer invocations;
-    public ChatModel.Message nextUserMessage;
-    public List<ChatModel.Message> thread;
+  public void setEventHandler(Agent.EventHandler handler) {
+    this.onEvents = handler;
   }
 
   public void hydrate(String state) {
@@ -98,7 +94,7 @@ public class ReActChatAgent implements Agent.I {
 
   private void sendEvent(Agent.EventType type, Object data) {
     if (onEvents != null) {
-      onEvents.onEvent(type, data);
+      onEvents.onEvent(this.id, type, data);
     }
   }
 
@@ -106,7 +102,7 @@ public class ReActChatAgent implements Agent.I {
   private string send() {
     if (this.nextUserMessage == null) {
       //Should we instead just ask it to continue with the next step?
-      throw new AgentException('No message to send!');
+      throw new Agent.FatalException('No message to send!');
     }
 
     try {
@@ -115,10 +111,10 @@ public class ReActChatAgent implements Agent.I {
       );
       reqMessages.add(this.nextUserMessage);
 
-      sendEvent(Agent.EventType.AGENT_REQUEST, this.nextUserMessage.content);
+      sendEvent(Agent.EventType.SENT, this.nextUserMessage.content);
       String response = chatModel.chat(reqMessages);
       System.debug(response);
-      sendEvent(Agent.EventType.AGENT_RESPONSE, response);
+      sendEvent(Agent.EventType.RECEIVED, response);
 
       thread.add(this.nextUserMessage);
       this.nextUserMessage = null;
@@ -135,16 +131,19 @@ public class ReActChatAgent implements Agent.I {
     try {
       if (agentResponse.action.command == null) {
         String msg = 'No command found! Please provide a valid command or continue with the next step.';
-        sendEvent(Agent.EventType.INVALID_AGENT_RESPONSE, msg);
+        // sendEvent(Agent.EventType.INVALID_AGENT_RESPONSE, msg);
         return new ChatModel.Message('user', msg);
       }
 
       sendEvent(
         Agent.EventType.EXECUTE_ACTION,
-        new Map<string, Object>{
-          'actionClass' => String.valueOf(agentResponse.action.command),
-          'args' => agentResponse.action.args
-        }
+        JSON.serializePretty(
+          new Map<string, Object>{
+            'actionClass' => String.valueOf(agentResponse.action.command)
+              .split(':')[0],
+            'args' => agentResponse.action.args
+          }
+        )
       );
 
       //excute the agents command
@@ -152,7 +151,7 @@ public class ReActChatAgent implements Agent.I {
         agentResponse.action.args
       );
 
-      sendEvent(Agent.EventType.ACTION_RESULT, actionResult);
+      // sendEvent(Agent.EventType.ACTION_RESULT, actionResult);
 
       if (actionResult == NO_RESPONSE) {
         //special responses type
@@ -195,12 +194,12 @@ public class ReActChatAgent implements Agent.I {
     if (invocations > maxInvocations) {
       // max iterations > current iterations
       //todo
-      throw new AgentException('Exceeded max iterations!');
+      throw new Agent.FatalException('Exceeded max iterations!');
     }
     invocations++;
 
     if (this.result != null) {
-      throw new AgentException('Agent has completed objective!');
+      throw new Agent.FatalException('Agent has completed objective!');
     }
 
     string response = send();
@@ -216,8 +215,10 @@ public class ReActChatAgent implements Agent.I {
       }
 
       this.nextUserMessage = executeAction(agentResponse);
+    } catch (Agent.FatalException e) {
+      throw e;
     } catch (Exception e) {
-      sendEvent(Agent.EventType.INVALID_AGENT_RESPONSE, e.getMessage());
+      // sendEvent(Agent.EventType.INVALID_AGENT_RESPONSE, e.getMessage());
       this.nextUserMessage = new ChatModel.Message(
         'user',
         'Your last response provided was invalid. ' + e.getMessage()
@@ -226,10 +227,11 @@ public class ReActChatAgent implements Agent.I {
       return;
     }
   }
-
-  public class AgentException extends Exception {
+  private class ChatAgentState {
+    public String objective;
+    public String result;
+    public Integer invocations;
+    public ChatModel.Message nextUserMessage;
+    public List<ChatModel.Message> thread;
   }
 }
-
-//** AgentConfig: Identity, tools, reasoning framework.  Shared by different AgentTypes */
-

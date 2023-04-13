@@ -7,16 +7,18 @@ public class Agent {
     Object[] getMessages();
     string suspend();
     void hydrate(string state);
+    void setEventHandler(EventHandler handler);
   }
 
   public interface EventHandler {
-    void onEvent(EventType type, Object data);
+    void onEvent(string AgentId, EventType type, Object data);
   }
 
   public enum EventType {
+    LOG_INIT,
     AGENT_CREATED,
-    AGENT_REQUEST,
-    AGENT_RESPONSE,
+    SENT,
+    RECEIVED,
     EXECUTE_ACTION,
     ACTION_RESULT,
     ACTION_ERROR,
@@ -39,5 +41,8 @@ public class Agent {
   }
 
   public class ResponseException extends Exception {
+  }
+
+  public class FatalException extends Exception {
   }
 }

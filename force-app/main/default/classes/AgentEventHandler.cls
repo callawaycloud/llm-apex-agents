@@ -3,6 +3,10 @@ public with sharing class AgentEventHandler {
   public void handle() {
     Map<String, Agent_Event__e[]> eventsByAgentId = new Map<String, Agent_Event__e[]>();
     for (Agent_Event__e evt : (Agent_Event__e[]) Trigger.new) {
+      //these are just used to trigger the UI update ASAP
+      if (evt.Type__c == Agent.EventType.LOG_INIT.name()) {
+        continue;
+      }
       if (!eventsByAgentId.containsKey(evt.Agent_Id__c)) {
         eventsByAgentId.put(evt.Agent_Id__c, new List<Agent_Event__e>{ evt });
       } else {
@@ -67,6 +71,8 @@ public with sharing class AgentEventHandler {
     public string data;
     public DateTime timestamp;
 
+    public AgentEventLog() {
+    }
     public AgentEventLog(Agent_Event__e evt) {
       this.eventType = evt.Type__c;
       this.data = evt.Data__c;

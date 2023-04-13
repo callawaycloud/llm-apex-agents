@@ -3,35 +3,57 @@
 // - Refactor logging to be part of agent manager / queue
 public class AgentQueueable implements Queueable, Database.AllowsCallouts {
   public static boolean FORCE_NEW_QUEUEABLE = false;
+  public static Long calloutMs = 0;
 
-  private Agent.I agent;
+  private Agent.I agnt;
+
   public AgentQueueable(Agent.I agent) {
-    this.agent = agent;
+    this.agnt = agent;
   }
 
-  public void execute(QueueableContext context) {
-    LoggingFinalizer logger = new LoggingFinalizer(this.agent);
-    System.attachFinalizer(logger);
+  /** Use this to run agents instead of enqueueing yourself
+   * @param immediate If true, the agent will run immediately, otherwise it will be queued
+   */
+  public void startAgent() {
+    startAgent(false);
+  }
 
-    Long calloutMs = 0;
+  public void startAgent(boolean immediate) {
+    AgentEventProducer evtProd = new AgentEventProducer();
 
-    // run mulitple time, so long as we have a generous capacity to do so
+    Agent_Log__c log = new Agent_Log__c(Agent_Id__c = this.agnt.getId());
+    insert log;
+    evtProd.onEvent(log.Agent_Id__c, Agent.EventType.LOG_INIT, log.id);
+
+    this.agnt.setEventHandler(evtProd);
+    System.enqueueJob(this);
+  }
+
+  private void runAgent() {
     while (
       Limits.getDmlRows() == 0 &&
       calloutMs < 60000 &&
-      agent.getResult() == null &&
+      this.agnt.getResult() == null &&
       FORCE_NEW_QUEUEABLE == false
     ) {
       System.debug('Running Agent Step');
       Long s = System.currentTimeMillis();
-      agent.next();
+      this.agnt.next();
       Long f = System.currentTimeMillis();
       calloutMs += (f - s);
     }
 
-    if (agent.getResult() == null) {
-      System.enqueueJob(new AgentQueueable(agent));
+    if (this.agnt.getResult() == null) {
+      System.enqueueJob(new AgentQueueable(this.agnt));
     }
+  }
+
+  public void execute(QueueableContext context) {
+    LoggingFinalizer logger = new LoggingFinalizer(this.agnt);
+    System.attachFinalizer(logger);
+
+    // run mulitple time, so long as we have a generous capacity to do so
+    runAgent();
   }
 
   /** Dump the Agent State so we can recover */

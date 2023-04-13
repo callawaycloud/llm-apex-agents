@@ -5,7 +5,9 @@
       <div class="slds-col slds-size_1-of-1">
         <div class="slds-grid slds-gutters slds-wrap slds-m-bottom_medium">
           <div class="slds-col slds-size_1-of-4">
-            <label class="slds-form-element__label" for="input">Input</label>
+            <label class="slds-form-element__label" for="input"
+              >Assignment</label
+            >
             <div class="slds-form-element__control">
               <lightning-formatted-text
                 id="input"
@@ -70,11 +72,14 @@
                   <div class="slds-media__body">
                     <div class="slds-page-header__name">
                       <div class="slds-page-header__name-title">
+                        <lightning-icon
+                          icon-name={event.icon}
+                          alternative-text="typeicon"
+                          title="typeicon"
+                        ></lightning-icon>
                         <lightning-badge
                           label={event.eventType}
-                          class="slds-p-left_none slds-p-right_small"
                         ></lightning-badge>
-                        •
                         <lightning-formatted-date-time
                           class="slds-p-left_small"
                           value={event.timestamp}
@@ -93,7 +98,9 @@
             </div>
             <div class="slds-page-header__row slds-page-header__row_gutters">
               <div class="slds-page-header__col-details">
-                <div class="slds-page-header__detail-row">{event.data}</div>
+                <div class="slds-page-header__detail-row">
+                  <pre>{event.data}</pre>
+                </div>
               </div>
             </div>
           </div>

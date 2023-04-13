@@ -31,27 +31,26 @@ public class ReActZeroShotChatPrompt implements Prompt.IReAct {
       Agent.Message msg = new Agent.Message();
 
       Map<String, Object> agentResponse = deserialize(agentMessage);
-      Object complete = agentResponse.get('complete');
-      Object result = agentResponse.get('result');
-
-      //Check if done
-      if (
-        complete instanceof Boolean &&
-        (Boolean) complete == true &&
-        result != null
-      ) {
-        if (result instanceof String) {
-          msg.result = (String) result;
-        } else {
-          msg.result = JSON.serialize(result);
-        }
-      }
 
       Object cmd = agentResponse.get('command');
       try {
         Map<string, Object> command = (Map<string, Object>) cmd;
 
         String commandName = (String) command?.get('name');
+
+        if (commandName == 'completeAssignment') {
+          Map<string, Object> answerArgs = (Map<string, Object>) command.get(
+            'args'
+          );
+          Object answer = answerArgs.get('answer');
+          if (answer instanceof String) {
+            msg.result = (String) answer;
+          } else {
+            msg.result = JSON.serialize(answer);
+          }
+          return msg;
+        }
+
         msg.action.command = tools.get(commandName);
 
         if (msg.action.command != null && command?.get('args') != null) {
@@ -89,14 +88,25 @@ public class ReActZeroShotChatPrompt implements Prompt.IReAct {
     );
 
     String prompt =
-      'Your Objective: """' +
+      'Today is ' +
+      Date.today().format() +
+      '. ' +
+      'You are assisting ' +
+      UserInfo.getFirstName() +
+      ' ' +
+      UserInfo.getLastName() +
+      '(UserID: ' +
+      UserInfo.getUserId() +
+      ').\n' +
+      'Your Assignment: \n"""' +
       objective +
       '"""\n\n' +
       'COMMANDS:\n' +
       String.join(actionDescriptions.values(), '\n') +
+      '\n`completeAssignment`: Run when the task is completed. Arguments: "answer": The answer or result of the assigned task. \n' +
       '\n\n' +
       'PERFORMANCE EVALUATION:\n' +
-      'You must always provide a valid "command".  When you are done, use the final command "exit" \n' +
+      'You must always provide a valid "command".  When the task is complete make sure to run `completeAssignment` \n' +
       'When you can complete the next step on you own, do so immediately.  Use commands for things you cannot perform yourself.\n' +
       'Continuously review and analyze your actions to ensure you are performing to the best of your abilities.\n' +
       'Reflect on past decisions and strategies to refine your approach.\n' +
@@ -117,9 +127,7 @@ public class ReActZeroShotChatPrompt implements Prompt.IReAct {
       '    "args":{\n' +
       '      "arg name": "value"\n' +
       '    }\n' +
-      '  },\n' +
-      '  "complete": "`true` when the objective has been met", \n' +
-      '  "result": "The final answer to the objective" \n' +
+      '  }\n' +
       '}';
 
     return prompt;
