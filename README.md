@@ -2,22 +2,13 @@
 
 Run Large Language Model (GPT) agents in Salesforce apex.
 
+<img width="1506" alt="Screen_Recording_2023-04-18_at_4_09_13_PM_mov" src="https://user-images.githubusercontent.com/5217568/232917551-a0e53a4a-65a7-4b8b-ad74-0f9860dce1cc.png">
+
+
 ## :shipit: What is an Agent?
 
 An “Agent” is a technique for instilling the ability for an LLM to “Reason” and take “Action”. This approach is introduced by the [ReAct Paper](https://arxiv.org/pdf/2210.03629.pdf) (Reason → Act) and used in popular libraries like [langchain](https://github.com/hwchase17/langchain) and [auto-gpt](https://github.com/Torantulino/Auto-GPT).
 
-
-**Tested Prompts:**
-
-- :white_check_mark: `Search for accounts containing the word "sample" and send a notification to the user with name = "charlie jonas", notifying them that they should remove the account.`
-- :white_check_mark: `write a SOQL query that returns all billing related fields for an account. Send me a notification with the results of the query`
-- :white_check_mark: `Get the weather tomorrow in Lander, wyoming.  Send a notification to Charlie Jonas letting him know how to dress`
-- :white_check_mark: `Research 3 companies that offer leading edge solutions for building API.  Insert the new account with basic information about the business, but only if the account does not already exist.`
-- :white_check_mark: `Find out how many employees work at amazon and update the account`
-- :white_check_mark: `query 3 accounts that do not have Number of Employees set.  Update the account with the number of employees from the internet.`
-- :white_check_mark: `See if you can fill in any missing information on the amazon account. Send me a notification with the summary`
-- :white_check_mark: `Search for accounts containing the word "sample". Create a task assigned to me with the subject "Remove Sample Account`
-- :white_check_mark: `write a SOQL query to group invoice total by project name.  Send me the results in a notification`
 
 ## Library Terminology
 
@@ -181,6 +172,18 @@ Currently there is some primitive logging place to an Object call `Agent_Log__c`
 - [x] refactor API tokens to use named credentials
 - [x] improve observability (lwc dashboard)
 - [x] LWC Chat Frontend (first pass)
+
+**Tested Prompts:**
+
+- :white_check_mark: `Search for accounts containing the word "sample" and send a notification to the user with name = "charlie jonas", notifying them that they should remove the account.`
+- :white_check_mark: `write a SOQL query that returns all billing related fields for an account. Send me a notification with the results of the query`
+- :white_check_mark: `Get the weather tomorrow in Lander, wyoming.  Send a notification to Charlie Jonas letting him know how to dress`
+- :white_check_mark: `Research 3 companies that offer leading edge solutions for building API.  Insert the new account with basic information about the business, but only if the account does not already exist.`
+- :white_check_mark: `Find out how many employees work at amazon and update the account`
+- :white_check_mark: `query 3 accounts that do not have Number of Employees set.  Update the account with the number of employees from the internet.`
+- :white_check_mark: `See if you can fill in any missing information on the amazon account. Send me a notification with the summary`
+- :white_check_mark: `Search for accounts containing the word "sample". Create a task assigned to me with the subject "Remove Sample Account`
+- :white_check_mark: `write a SOQL query to group invoice total by project name.  Send me the results in a notification`
 
 ## Contributing
 
