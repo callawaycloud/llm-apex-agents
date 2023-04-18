@@ -1,4 +1,5 @@
 //Written by Charlie Jonas
+// This tool isn't typically needed as you can just embed the current date in the prompt instructions
 public class GetCurrentUserAgentTool implements IAgentTool {
   public string getDescription() {
     return 'Gets id, name & email for the user you are interacting with';

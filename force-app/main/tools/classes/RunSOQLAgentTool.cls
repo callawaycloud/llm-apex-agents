@@ -1,5 +1,5 @@
 //Written by GPT-4
-public class RunSQLAgentTool implements IAgentTool {
+public class RunSOQLAgentTool implements IAgentTool {
   public String execute(Map<String, String> args) {
     // Check if sql argument is present
     if (!args.containsKey('sql')) {

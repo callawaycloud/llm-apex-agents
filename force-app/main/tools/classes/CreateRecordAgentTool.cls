@@ -32,11 +32,33 @@ public class CreateRecordAgentTool implements IAgentTool {
         fieldsJson
       );
 
+      Map<String, Schema.SObjectField> mfields = objectType.getDescribe()
+        .fields.getMap();
+
       for (Object data : inputList) {
         SObject record = objectType.newSObject();
         Map<String, Object> fieldsData = (Map<String, Object>) data;
         for (String fieldName : fieldsData.keySet()) {
-          record.put(fieldName, fieldsData.get(fieldName));
+          Schema.DescribeFieldResult fieldMeta = mfields.get(fieldName)
+            ?.getDescribe();
+          if (fieldMeta == null) {
+            continue;
+          }
+
+          // handle data types that do no serialize directly
+          if (fieldMeta.type == Schema.DisplayType.DATE) {
+            record.put(
+              fieldName,
+              Date.valueOf((string) fieldsData.get(fieldName))
+            );
+          } else if (fieldMeta.type == Schema.DisplayType.DateTime) {
+            record.put(
+              fieldName,
+              Datetime.valueOf((string) fieldsData.get(fieldName))
+            );
+          } else {
+            record.put(fieldName, fieldsData.get(fieldName));
+          }
         }
         records.add(record);
       }

@@ -23,13 +23,13 @@ public class InternetSearchAgentTool implements IAgentTool {
     }
 
     HttpRequest request = new HttpRequest();
+    request.setMethod('GET');
     request.setEndpoint(
       'https://serpapi.com/search.json?q=' +
         EncodingUtil.urlEncode(query, 'UTF-8') +
         '&hl=en&gl=us&api_key=' +
         EncodingUtil.urlEncode(api_key, 'UTF-8')
     );
-    request.setMethod('GET');
 
     HttpResponse response = new Http().send(request);
 
@@ -77,7 +77,7 @@ public class InternetSearchAgentTool implements IAgentTool {
   private class Result {
     public String snippet;
     public String[] snippet_highlighted_words;
-    public string url;
+    public string link;
   }
 
   private class GraphResult {

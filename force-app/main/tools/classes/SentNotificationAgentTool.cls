@@ -1,5 +1,15 @@
 public class SentNotificationAgentTool implements IAgentTool {
   public Id notificationTypeId;
+
+  public SentNotificationAgentTool() {
+    CustomNotificationType notifType = [
+      SELECT Id
+      FROM CustomNotificationType
+      WHERE DeveloperName = 'Agent_Notification'
+    ];
+    this.notificationTypeId = notifType.Id;
+  }
+
   public SentNotificationAgentTool(Id notificationTypeId) {
     this.notificationTypeId = notificationTypeId;
   }
@@ -9,11 +19,12 @@ public class SentNotificationAgentTool implements IAgentTool {
   }
 
   public Map<string, string> getParameters() {
-    Map<string, string> params = new Map<string, string>();
-    params.put('title', 'notification title');
-    params.put('body', 'notification message');
-    params.put('to', 'user id to send notification to');
-    params.put('targetId', 'record id this notification relates to');
+    Map<string, string> params = new Map<string, string>{
+      'title' => 'Notification Title',
+      'body' => 'Notification Message',
+      'to' => 'User Id to send notification to',
+      'targetId' => 'Record Id this notification relates to'
+    };
     return params;
   }
 

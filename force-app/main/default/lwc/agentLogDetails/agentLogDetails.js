@@ -1,4 +1,4 @@
-import { api } from "lwc";
+import { api, track } from "lwc";
 import LightningModal from "lightning/modal";
 import CurrentUserId from "@salesforce/user/Id";
 import { subscribe, unsubscribe } from "lightning/empApi";
@@ -24,10 +24,13 @@ export default class AgentLogDetails extends LightningModal {
       return;
     }
 
-    this.eventLog = JSON.parse(this.log.Events__c).map((it) => ({
-      ...it,
-      data: JSON.parse(it.data)
-    }));
+    this.eventLog = JSON.parse(this.log.Events__c)
+      .map((it) => ({
+        ...it,
+        data: JSON.parse(it.data),
+        ...getEventExtraProps(it)
+      }))
+      .reverse();
   }
 
   handleSubscribe() {
@@ -68,11 +71,38 @@ export default class AgentLogDetails extends LightningModal {
     });
   }
 
-  get displayDataTable() {
-    return this.logs && this.isTableVisible;
-  }
-
   handleClose() {
     this.close("tests");
   }
+}
+
+function getEventExtraProps(evt) {
+  return (() => {
+    switch (evt.eventType) {
+      case "AGENT_COMPLETED":
+        return {
+          icon: "standard:answer_public"
+        };
+      case "RECEIVED":
+        return {
+          icon: "standard:product_consumed"
+        };
+      case "SENT":
+        return {
+          icon: "standard:logging"
+        };
+      case "EXECUTE_ACTION":
+        return {
+          icon: "standard:apex"
+        };
+      case "AGENT_CREATED":
+        return {
+          icon: "standard:messaging_user"
+        };
+      default:
+        return {
+          icon: ""
+        };
+    }
+  })();
 }

@@ -26,6 +26,7 @@ const columns = [
       minute: "2-digit"
     }
   },
+  { label: "Status", fieldName: "Status__c" },
   {
     type: "action",
     typeAttributes: { rowActions: actions }
@@ -122,9 +123,9 @@ export default class AgentLogSubscriber extends LightningElement {
   }
 
   async viewLogDetails(log) {
-    console.log("opening details", JSON.stringify(log));
+    console.log("opening details", JSON.parse(JSON.stringify(log)));
     const result = await LogDetailsModal.open({
-      size: "medium",
+      size: "large",
       description: "Accessible description of modal's purpose",
       log: log
     });
