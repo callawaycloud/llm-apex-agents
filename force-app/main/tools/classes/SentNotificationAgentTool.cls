@@ -1,5 +1,15 @@
 public class SentNotificationAgentTool implements IAgentTool {
   public Id notificationTypeId;
+
+  public SentNotificationAgentTool() {
+    CustomNotificationType notifType = [
+      SELECT Id
+      FROM CustomNotificationType
+      WHERE DeveloperName = 'Agent_Notification'
+    ];
+    this.notificationTypeId = notifType.Id;
+  }
+
   public SentNotificationAgentTool(Id notificationTypeId) {
     this.notificationTypeId = notificationTypeId;
   }

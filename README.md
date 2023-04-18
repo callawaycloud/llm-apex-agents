@@ -22,78 +22,69 @@ An “Agent” is a technique for instilling the ability for an LLM to “Reason
 ## Library Terminology
 
 - `Model`: LLM/GTP model. Currently only OpenAI GPT Completion & Chat models are supported.
-- `Prompt`: The communication "protocal" between the model & system. Currently only ReAct style prompts are supported.
+- `Prompt`: The communication "protocol" between the model & system. Currently only ReAct style prompts are supported.
 - `Agent`: A instance formed to solve a given objective.
 - `Tools`: The commands at the agents disposal
 - `Action`: The act of invoking a tool
 
 ## Getting Started
 
-1. install in a scratch to developer edition using `sfdx force:mdapi:deploy`
+1. install in a scratch org (`force:source:push`) or to a developer edition (`force:mdapi:deploy`)
 
-NOTE: Scratch & developer orgs have a limit of 5 chained queuable, which will limit how much work the agent can do.
+> **Warning**
+> Scratch & developer orgs have a limit of 5 chained queueable jobs, which will limit how much work the agent can do.
 
-2. Assign yourself to the `Apex Agent` permission set
+2. Assign yourself to the `Apex Agent` permission set. `sfdx force:user:permset:assign -n Apex_Agents`
 
-2. Create a `NamedCredential` for OpenAI
-- Add `Permission Set Mapping` with value of `API_KEY`
+3. Open `Setup -> Named Credential -> External Credential` and find `OpenAI`
+- Add `Permission Set Mapping` with name of `API_KEY` and your OpenAI API key as the value
 
-NOTE: Some tools might have their own setup requirements, which will be documented in the class.  EG `InternetSearchAgentTool` requires a SERP API / Named credential.
+4. (Optional) Open `Setup -> Custom Settings -> SerpAPI` and add your [SERP API key](https://serpapi.com/dashboard).  This is required to enable the internet search tool.
+
+5. Navigate to the "Apex Agents" app and run a task, or start the agent using example code below
+
+
+For best results, it's recommended that you use `OpenAIChatModel` with `gpt-4` & `ReActZeroShotChatPromptManager` and only include the minimum number of tools you need.
 
 
 ### :exclamation: WARNING: THIS IS EXPERIMENTAL!
 
 This library is not production ready and may never be:
 
-- The API usage can be relatively expensive if you let it run wild.
+- The API usage can be relatively expensive if you let it run wild. 
 - The code itself is likely to undergo significant breaking changes.
 - It is not yet optimized for performance and is not yet fully tested.
 - Use at your own risk.
 
-Library comes out of the box with some useful agents and actions.
+> **Warning**
+> Salesforce seems to have a bug with `aborting` queueable jobs with long running HTTP callouts.  If you abort a job, it will still run to completion, and continue to schedule the following jobs!
 
-For best results, it's recommended that you use `OpenAIChatModel` with `gpt-4` & `ReActZeroShotChatPromptManager` and only include the minimum number of tools you need.
 
 ### Example
 
 ```java
-OpenAIChatModel chatLLM = new OpenAIChatModel(
-  'YOUR_OPEN_AI_KEY'
-);
+  OpenAIChatModel chatLLM = new OpenAIChatModel();
 
-// setup tools
-Map<String, IAgentTool> tools = new Map<String, IAgentTool>{
-  'search' => new InternetSearchAgentTool(
-    'YOUR_SERP_API_KEY'
-  ),
-  'find_records' => new SOSLSearchAgentTool(),
-  'send_notification' => new SentNotificationAgentTool('0MLDa0000000EMDOA2'),
-  'get_fields' => new GetSObjectFieldsAgentTool(),
-  'create_records' => new CreateRecordAgentTool(),
-  'get_fields' => new GetSObjectFieldsAgentTool(),
-  'list_custom_objects' => new ListSObjectAgentTool(),
-  'execute_soql' => new RunSQLAgentTool(),
-  'get_current_user' => new GetCurrentUserAgentTool()
-};
+  // chatLLM.model = 'gpt-3.5-turbo';
+  chatLLM.model = 'gpt-4';
 
-// add prompt
-ReActZeroShotChatPrompt prompt = new ReActZeroShotChatPrompt(
-  tools
-);
+  SerpAPIKey__c mc = SerpAPIKey__c.getInstance(UserInfo.getUserId());
+  Map<String, IAgentTool> tools = new Map<String, IAgentTool>{
+    'search_internet' => new InternetSearchAgentTool(mc.API_Key__c),
+    'find_records' => new SOSLSearchAgentTool(),
+    'send_notification' => new SentNotificationAgentTool(),
+    'create_records' => new CreateRecordAgentTool(),
+    'get_fields' => new GetSObjectFieldsAgentTool(),
+    'list_custom_objects' => new ListSObjectAgentTool(),
+    'execute_soql' => new RunSQLAgentTool()
+  };
+  ReActZeroShotChatPrompt prompt = new ReActZeroShotChatPrompt(tools);
+  ReActChatAgent agent = new ReActChatAgent('Find 3 accounts with missing phone numbers and try to populate them from the internet', prompt, chatLLM);
+  agent.maxInvocations = 15;
 
-// construct agent
-ReActChatAgent agent = new ReActChatAgent(
-  'See if you can fill in any missing information on the amazon account. Send me a notification with the summary',
-  prompt,
-  chatLLM
-);
-agent.maxInvocations = 15;
-
-AgentQueueable queuable = new AgentQueueable(agent);
-System.enqueueJob(queuable);
+  AgentQueueable manager = new AgentQueueable(agent);
+  manager.startAgent();
 ```
-
-
 
 
 ## :hammer_and_wrench: Tools

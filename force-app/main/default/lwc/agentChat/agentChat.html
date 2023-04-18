@@ -1,16 +1,48 @@
 <template>
-  <lightning-card title="Agent Chat" icon-name="standard:live_chat">
-    <lightning-button
-      label="Search"
-      icon-name="standard:live_chat"
-      slot="actions"
-      onclick={handleClick}
-    ></lightning-button>
-    <div class="slds-m-around_medium">
-      <lightning-textarea
-        label="Search when user hits the 'enter' key"
-        placeholder="Query the e-corp account to find a list of important fields which we are missing data for.  Search the internet for the missing information and update the account.  Send me a notification with a summary."
-      ></lightning-textarea>
-    </div>
-  </lightning-card>
+  <template if:false={currentAgentId}>
+    <lightning-card title="New Agent" icon-name="standard:live_chat">
+      <lightning-button
+        label="Start Agent"
+        icon-name="standard:live_chat"
+        slot="actions"
+        onclick={handleClick}
+      ></lightning-button>
+      <div class="slds-m-around_medium">
+        <lightning-textarea
+          label="Provide instructions for agent:"
+          placeholder="Query the e-corp account to find a list of important fields which we are missing data for.  Search the internet for the missing information and update the account.  Send me a notification with a summary."
+        ></lightning-textarea>
+      </div>
+    </lightning-card>
+  </template>
+  <template if:true={currentAgentId}>
+    <lightning-card title="Running Agent">
+      <lightning-button
+        label="New Agent"
+        icon-name="standard:live_chat"
+        slot="actions"
+        onclick={clearCurrentAgent}
+      ></lightning-button>
+      <div class="slds-m-around_medium">
+        <lightning-card variant="narrow" icon-name="standard:problem">
+          <h1 slot="title">Agent Objective</h1>
+          <div>{agentObjective}</div>
+        </lightning-card>
+        <template for:each={agentMessages} for:item="msg">
+          <lightning-card key={msg.id} variant="narrow" icon-name={msg.icon}>
+            <h1 slot="title">{msg.title}</h1>
+            <lightning-formatted-text
+              id="text"
+              value={msg.text}
+            ></lightning-formatted-text>
+          </lightning-card>
+        </template>
+
+        <lightning-card if:true={isRunning}>
+          <hr />
+          <lightning-spinner alternative-text="Loading..."> </lightning-spinner>
+        </lightning-card>
+      </div>
+    </lightning-card>
+  </template>
 </template>

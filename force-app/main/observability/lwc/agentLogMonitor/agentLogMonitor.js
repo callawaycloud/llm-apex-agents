@@ -26,6 +26,7 @@ const columns = [
       minute: "2-digit"
     }
   },
+  { label: "Status", fieldName: "Status__c" },
   {
     type: "action",
     typeAttributes: { rowActions: actions }

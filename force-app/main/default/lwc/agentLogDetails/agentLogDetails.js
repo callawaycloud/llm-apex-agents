@@ -1,4 +1,4 @@
-import { api } from "lwc";
+import { api, track } from "lwc";
 import LightningModal from "lightning/modal";
 import CurrentUserId from "@salesforce/user/Id";
 import { subscribe, unsubscribe } from "lightning/empApi";
@@ -15,12 +15,6 @@ export default class AgentLogDetails extends LightningModal {
     this.parseEventLog();
   }
 
-  renderedCallback() {
-    setTimeout(() => {
-      this.scrollToBottom();
-    }, 500);
-  }
-
   disconnectedCallback() {
     this.handleUnsubscribe();
   }
@@ -30,11 +24,13 @@ export default class AgentLogDetails extends LightningModal {
       return;
     }
 
-    this.eventLog = JSON.parse(this.log.Events__c).map((it) => ({
-      ...it,
-      data: JSON.parse(it.data),
-      ...getEventExtraProps(it)
-    }));
+    this.eventLog = JSON.parse(this.log.Events__c)
+      .map((it) => ({
+        ...it,
+        data: JSON.parse(it.data),
+        ...getEventExtraProps(it)
+      }))
+      .reverse();
   }
 
   handleSubscribe() {
@@ -51,7 +47,6 @@ export default class AgentLogDetails extends LightningModal {
           .then((result) => {
             this.log = result;
             this.parseEventLog();
-            this.scrollToBottom();
           })
           .catch((e) => {
             console.error("getSingleRecord error", e);
@@ -74,11 +69,6 @@ export default class AgentLogDetails extends LightningModal {
     unsubscribe(this.subscription, (response) => {
       console.log("Unsubscribed from channel:", response.subscription);
     });
-  }
-
-  scrollToBottom() {
-    let bottomElement = this.template.querySelector(".bottom");
-    bottomElement.scrollIntoView({ behavior: "smooth" });
   }
 
   handleClose() {

@@ -51,10 +51,13 @@ public with sharing class AgentEventHandler {
 
         if (newEvent.Type__c == Agent.EventType.AGENT_CREATED.name()) {
           log.Input__c = newEvent.Data__c;
+          log.Status__c = 'In Progress';
         } else if (newEvent.Type__c == Agent.EventType.AGENT_COMPLETED.name()) {
           log.Result__c = newEvent.Data__c;
+          log.Status__c = 'Completed';
         } else if (newEvent.Type__c == Agent.EventType.AGENT_CRASH.name()) {
           log.Error__c = newEvent.Data__c;
+          log.Status__c = 'Error';
         }
         log.Last_Agent_Update__c = newEvent.CreatedDate;
       }

@@ -31,6 +31,10 @@
                 <behavior>Edit</behavior>
                 <field>Last_Agent_Update__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Status__c</field>
+            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>

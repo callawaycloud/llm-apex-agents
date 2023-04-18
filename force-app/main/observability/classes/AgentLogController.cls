@@ -11,7 +11,8 @@ public without sharing class AgentLogController {
         Error__c,
         Log__c,
         Events__c,
-        Last_Agent_Update__c
+        Last_Agent_Update__c,
+        Status__c
       FROM Agent_Log__c
       ORDER BY Last_Agent_Update__c DESC NULLS LAST
       LIMIT 10
@@ -29,7 +30,8 @@ public without sharing class AgentLogController {
         Error__c,
         Log__c,
         Events__c,
-        Last_Agent_Update__c
+        Last_Agent_Update__c,
+        Status__c
       FROM Agent_Log__c
       WHERE Agent_Id__c = :agentId
     ];
@@ -40,20 +42,22 @@ public without sharing class AgentLogController {
   @AuraEnabled
   public static string runAgent(string objective) {
     OpenAIChatModel chatLLM = new OpenAIChatModel();
-
-    // chatLLM.model = 'gpt-3.5-turbo';
     chatLLM.model = 'gpt-4';
 
     Map<String, IAgentTool> tools = new Map<String, IAgentTool>{
       'find_records' => new SOSLSearchAgentTool(),
-      'send_notification' => new SentNotificationAgentTool(
-        '0ML8F000000CgTeWAK' // custom label? Or just query a random notification type
-      ),
+      'send_notification' => new SentNotificationAgentTool(),
       'create_records' => new CreateRecordAgentTool(),
       'get_fields' => new GetSObjectFieldsAgentTool(),
       'list_custom_objects' => new ListSObjectAgentTool(),
       'execute_soql' => new RunSQLAgentTool()
     };
+
+    SerpAPIKey__c mc = SerpAPIKey__c.getInstance(UserInfo.getUserId());
+    if (!String.isEmpty(mc.API_Key__c)) {
+      tools.put('search_internet', new InternetSearchAgentTool(mc.API_Key__c));
+    }
+
     ReActZeroShotChatPrompt prompt = new ReActZeroShotChatPrompt(tools);
     ReActChatAgent agent = new ReActChatAgent(objective, prompt, chatLLM);
 
