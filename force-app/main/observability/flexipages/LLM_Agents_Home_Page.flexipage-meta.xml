@@ -3,8 +3,8 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentName>agentLogMonitor</componentName>
-                <identifier>c_agentLogMonitor</identifier>
+                <componentName>agentChat</componentName>
+                <identifier>c_agentChat</identifier>
             </componentInstance>
         </itemInstances>
         <name>top</name>
@@ -21,8 +21,8 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentName>agentChat</componentName>
-                <identifier>c_agentChat</identifier>
+                <componentName>agentLogMonitor</componentName>
+                <identifier>c_agentLogMonitor</identifier>
             </componentInstance>
         </itemInstances>
         <name>sidebar</name>

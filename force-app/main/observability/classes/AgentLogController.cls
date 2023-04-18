@@ -53,6 +53,7 @@ public without sharing class AgentLogController {
       'create_records' => new CreateRecordAgentTool(),
       'get_fields' => new GetSObjectFieldsAgentTool(),
       'list_custom_objects' => new ListSObjectAgentTool(),
+      'send_email' => new SendEmailAgentTool(),
       'execute_soql' => new RunSOQLAgentTool()
     };
 

@@ -36,15 +36,12 @@ An “Agent” is a technique for instilling the ability for an LLM to “Reason
 
 2. Assign yourself to the `Apex Agent` permission set. `sfdx force:user:permset:assign -n Apex_Agents`
 
-3. Open `Setup -> Named Credential -> External Credential` and find `OpenAI`
-- Add `Permission Set Mapping` with name of `API_KEY` and your OpenAI API key as the value
+3. Open `Setup -> Named Credential -> External Credential -> OpenAI`.  Edit the "Permission Set Mapping" to add a "Authentication Parameters" with name of `API_KEY` and your OpenAI API Key as the value
 
-4. (Optional) Open `Setup -> Custom Settings -> Apex Agent Settings	` and add your [SERP API key](https://serpapi.com/dashboard) & [ExtactorAPI key](https://extractorapi.com/).  This is required to enable the internet search capabilities. Both have free tiers.
+4. (Optional) Open `Setup -> Custom Settings -> Apex Agent Settings	-> manage` and add your [SERP API key](https://serpapi.com/dashboard) & [ExtactorAPI key](https://extractorapi.com/).  This is required to enable the internet search capabilities. Both have free tiers.
 
-5. Navigate to the "Apex Agents" app and run a task, or start the agent using example code below
+5. Navigate to the "Apex Agents" app (from app launcher) and run a task.  Or start the agent using example code below.
 
-
-For best results, it's recommended that you use `OpenAIChatModel` with `gpt-4` & `ReActZeroShotChatPromptManager` and only include the minimum number of tools you need.
 
 
 ### :exclamation: WARNING: THIS IS EXPERIMENTAL!
@@ -85,6 +82,9 @@ This library is not production ready and may never be:
   AgentQueueable manager = new AgentQueueable(agent);
   manager.startAgent();
 ```
+
+> **Note**
+> For best results, it's recommended that you use `OpenAIChatModel` with `gpt-4` & `ReActZeroShotChatPromptManager` and only include the minimum number of tools you need.
 
 
 ## :hammer_and_wrench: Tools
