@@ -138,12 +138,16 @@ public class GreetingAgentTool implements IAgentTool {
   }
 
   public Map<string, string> getParameters() {
-    Map<string, string> params = new Map<string, string>();
-    params.put('name', 'The name to greet');
-    return params;
+    return new Map<string, string>({
+      'name' => 'The name to greet'
+    });
   }
 
   public string execute(Map<string, string> args) {
+    if(String.isEmpty(args.get('name')){ 
+       // throw an error with instructions so the agent can self correct
+       throw new Agent.ActionRuntimeException('missing required parameter: name');
+    }
     return 'hello ' + args.get('name');
   }
 ```
