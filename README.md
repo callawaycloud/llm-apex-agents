@@ -39,7 +39,7 @@ An “Agent” is a technique for instilling the ability for an LLM to “Reason
 3. Open `Setup -> Named Credential -> External Credential` and find `OpenAI`
 - Add `Permission Set Mapping` with name of `API_KEY` and your OpenAI API key as the value
 
-4. (Optional) Open `Setup -> Custom Settings -> SerpAPI` and add your [SERP API key](https://serpapi.com/dashboard).  This is required to enable the internet search tool.
+4. (Optional) Open `Setup -> Custom Settings -> Apex Agent Settings	` and add your [SERP API key](https://serpapi.com/dashboard) & [ExtactorAPI key](https://extractorapi.com/).  This is required to enable the internet search capabilities. Both have free tiers.
 
 5. Navigate to the "Apex Agents" app and run a task, or start the agent using example code below
 
@@ -60,7 +60,7 @@ This library is not production ready and may never be:
 > Salesforce seems to have a bug with `aborting` queueable jobs with long running HTTP callouts.  If you abort a job, it will still run to completion, and continue to schedule the following jobs!
 
 
-### Example
+### Example Code
 
 ```java
   OpenAIChatModel chatLLM = new OpenAIChatModel();
@@ -117,7 +117,8 @@ This library is not production ready and may never be:
 #### Internet/API tools
 
 - [x] Internet Search (limited)
-- [ ] Calculate
+- [x] Extract info from web page
+- [ ] Calculate (wolfram alpha)
 - [ ] [Stonks](https://github.com/public-apis/public-apis#finance)
 - [ ] [Company lookup](https://api.orb-intelligence.com/docs/)
 - [ ] [news](https://github.com/public-apis/public-apis#news)
@@ -158,7 +159,7 @@ public class GreetingAgentTool implements IAgentTool {
 
 *Tips:* 
 - You can return JSON or YAML using `JSON.serialize`
-- Make your input as forgiving as possible and return helpful error messages back if the input is invalid.
+- Make your input as forgiving as possible and always return helpful error messages back if the input is invalid.
 
 ## Custom Prompts
 
@@ -166,21 +167,22 @@ You can write your own ReAct style prompts by implementing `Prompt.IReAct`.
 
 ## Logging
 
-Currently there is some primitive logging place to an Object call `Agent_Log__c`.  
+Currently there is some primitive logging place to an Object call `Agent_Log__c`.  Agent steps fire Agent_Event__e immediate platform events, which result in the log being updated in realtime.
 
+## Other Planned Improvements:
 
-## Contributing
-
-The easiest way to contribute at this stage is to create new "AgentTools" (PR's welcome!) and experiment to see what this thing can do.
-
-Other improvements:
-
-- [ ] refactor API tokens to use named credentials
-- [ ] improve observability (lwc component?)
+- [ ] ask for permission to run actions
 - [ ] suspend/reanimate agent
-- [ ] LWC Chat Frontend
 - [ ] Support for Few Shot prompts
 - [ ] Support for long term memory
 - [ ] add tests (have agent write them)
 - [ ] use GPT-3.5 to reduce returned tokens to agent
     - `{thought/reasoning} {action_result}` 
+- [x] refactor API tokens to use named credentials
+- [x] improve observability (lwc dashboard)
+- [x] LWC Chat Frontend (first pass)
+
+## Contributing
+
+The easiest way to contribute at this stage is to create new "AgentTools" (PR's welcome!) and experiment to see what this thing can do.
+

@@ -44,18 +44,36 @@ public without sharing class AgentLogController {
     OpenAIChatModel chatLLM = new OpenAIChatModel();
     chatLLM.model = 'gpt-4';
 
+    OpenAIChatModel fastLLM = new OpenAIChatModel();
+    fastLLM.model = 'gpt-3.5-turbo';
+
     Map<String, IAgentTool> tools = new Map<String, IAgentTool>{
       'find_records' => new SOSLSearchAgentTool(),
       'send_notification' => new SentNotificationAgentTool(),
       'create_records' => new CreateRecordAgentTool(),
       'get_fields' => new GetSObjectFieldsAgentTool(),
       'list_custom_objects' => new ListSObjectAgentTool(),
-      'execute_soql' => new RunSQLAgentTool()
+      'execute_soql' => new RunSOQLAgentTool()
     };
 
-    SerpAPIKey__c mc = SerpAPIKey__c.getInstance(UserInfo.getUserId());
-    if (!String.isEmpty(mc.API_Key__c)) {
-      tools.put('search_internet', new InternetSearchAgentTool(mc.API_Key__c));
+    Agent_Settings__c agentSettings = Agent_Settings__c.getInstance(
+      UserInfo.getUserId()
+    );
+    if (!String.isEmpty(agentSettings.SERP_API_Key__c)) {
+      tools.put(
+        'search_internet',
+        new InternetSearchAgentTool(agentSettings.SERP_API_Key__c)
+      );
+    }
+
+    if (!String.isEmpty(agentSettings.Extractor_API_Key__c)) {
+      tools.put(
+        'search_in_webpage',
+        new ExtractWebpageInfoAgentTool(
+          agentSettings.Extractor_API_Key__c,
+          fastLLM
+        )
+      );
     }
 
     ReActZeroShotChatPrompt prompt = new ReActZeroShotChatPrompt(tools);

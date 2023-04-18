@@ -77,7 +77,7 @@ public class InternetSearchAgentTool implements IAgentTool {
   private class Result {
     public String snippet;
     public String[] snippet_highlighted_words;
-    public string url;
+    public string link;
   }
 
   private class GraphResult {

@@ -26,7 +26,7 @@ public class AgentQueueable implements Queueable, Database.AllowsCallouts {
     evtProd.onEvent(log.Agent_Id__c, Agent.EventType.LOG_INIT, log.id);
 
     this.agnt.setEventHandler(evtProd);
-    System.enqueueJob(this);
+    System.enqueueJob(this, 0);
   }
 
   private void runAgent() {
@@ -44,7 +44,7 @@ public class AgentQueueable implements Queueable, Database.AllowsCallouts {
     }
 
     if (this.agnt.getResult() == null) {
-      System.enqueueJob(new AgentQueueable(this.agnt));
+      System.enqueueJob(new AgentQueueable(this.agnt), 0);
     }
   }
 
@@ -72,6 +72,7 @@ public class AgentQueueable implements Queueable, Database.AllowsCallouts {
     public void execute(FinalizerContext ctx) {
       // Commit the buffer
       System.Debug('committing log records to database');
+      System.debug(ctx);
 
       if (ctx.getResult() == ParentJobResult.UNHANDLED_EXCEPTION) {
         Agent_Log__c log = new Agent_Log__c(
