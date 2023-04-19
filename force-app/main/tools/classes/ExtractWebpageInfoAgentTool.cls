@@ -15,12 +15,10 @@ public class ExtractWebpageInfoAgentTool implements IAgentTool {
   }
 
   public Map<string, string> getParameters() {
-    Map<string, string> params = new Map<string, string>{
+    return new Map<string, string>{
       'url' => 'The url/link of the webpage to search in',
       'targetInfo' => '(optional) A general description of the information you are looking for'
     };
-
-    return params;
   }
 
   // make a call to https://extractorapi.com/api/v1/extractor/?apikey=14ad2ea5995045b351e90595786fb6106a52aa0b&url=example.com&fields=text
@@ -29,7 +27,9 @@ public class ExtractWebpageInfoAgentTool implements IAgentTool {
   public String execute(Map<string, string> args) {
     // Check if the required 'url' parameter is provided
     if (!args.containsKey('url')) {
-      return 'Error: Missing required parameter "url".';
+      throw new Agent.ActionRuntimeException(
+        'Error: Missing required parameter "url".'
+      );
     }
 
     // Prepare the request
@@ -51,8 +51,9 @@ public class ExtractWebpageInfoAgentTool implements IAgentTool {
     try {
       res = http.send(req);
     } catch (Exception e) {
-      return 'Error: Failed to fetch data from the provided URL. ' +
-        e.getMessage();
+      throw new Agent.ActionRuntimeException(
+        'Failed to fetch data from the provided URL. ' + e.getMessage()
+      );
     }
 
     // Parse the response
@@ -63,10 +64,12 @@ public class ExtractWebpageInfoAgentTool implements IAgentTool {
 
     // Check the status_code and status of the response
     if (result.status_code != 200) {
-      return 'Error: Failed to extract text from the URL. Status code: ' +
-        result.status_code +
-        ', Status: ' +
-        result.status;
+      throw new Agent.ActionRuntimeException(
+        'Failed to extract text from the URL. Status code: ' +
+          result.status_code +
+          ', Status: ' +
+          result.status
+      );
     }
 
     // Keep it at roughly 1000 tokens
@@ -83,22 +86,28 @@ public class ExtractWebpageInfoAgentTool implements IAgentTool {
     if (
       args.containsKey('targetInfo') && !String.isEmpty(args.get('targetInfo'))
     ) {
-      ChatModel.Message[] messages = new List<ChatModel.Message>{
-        new ChatModel.Message(
-          'system',
-          'Your job is to find and return the requested information from webpage text. Be concise, yet complete'
-        ),
-        new ChatModel.Message(
-          'user',
-          'Requested Info:\n"""' +
-            args.get('targetInfo') +
-            '"""' +
-            '\n\nWebpage:\n"""' +
-            webText +
-            '"""'
-        )
-      };
-      return summerizationModel.chat(messages);
+      try {
+        ChatModel.Message[] messages = new List<ChatModel.Message>{
+          new ChatModel.Message(
+            'system',
+            'Your job is to find and return the requested information from webpage text. Be concise, yet complete'
+          ),
+          new ChatModel.Message(
+            'user',
+            'Requested Info:\n"""' +
+              args.get('targetInfo') +
+              '"""' +
+              '\n\nWebpage:\n"""' +
+              webText +
+              '"""'
+          )
+        };
+        return summerizationModel.chat(messages);
+      } catch (Exception e) {
+        throw new Agent.ActionRuntimeException(
+          'Failed to summarize text. ' + e.getMessage()
+        );
+      }
     } else {
       return result.text;
     }

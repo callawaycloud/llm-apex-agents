@@ -91,7 +91,7 @@ This library is not production ready and may never be:
 - [x] Insert Record
 - [x] Update Record
 - [x] Get current user
-- [ ] Draft / Send Email
+- [x] Draft / Send Email
 - [ ] Post to chatter
 - [ ] merge records
 - [ ] create file/attachment
@@ -116,7 +116,7 @@ This library is not production ready and may never be:
 - [ ] [link preview](LinkPreview) | [microlink](https://microlink.io/)
 
 #### GPT tools
-- [ ] Summarize text
+- [ ] Batch Summarize text
 - [ ] Categorization
 - [ ] Sentiment Analysis
 - [ ] load/save Memory

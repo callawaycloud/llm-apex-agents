@@ -12,7 +12,9 @@ public class GetSObjectFieldsAgentTool implements IAgentTool {
     String sobType = args.get('sobject');
     SObjectType describeType = Schema.getGlobalDescribe().get(sobType);
     if (describeType == null) {
-      return 'SObject not found for ' + sobType + '.';
+      throw new Agent.ActionRuntimeException(
+        'SObject not found for ' + sobType + '.'
+      );
     }
     Map<String, Schema.SObjectField> mfields = describeType.getDescribe()
       .fields.getMap();

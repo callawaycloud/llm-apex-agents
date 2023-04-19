@@ -8,7 +8,6 @@ export default class AgentChat extends LightningElement {
   @track currentAgentId;
   agentObjective;
   @track agentMessages = [];
-  isRunning = false;
 
   connectedCallback() {
     this.handleSubscribe();
@@ -25,7 +24,6 @@ export default class AgentChat extends LightningElement {
     runAgent({ objective: element.value })
       .then((response) => {
         this.currentAgentId = response;
-        this.isRunning = true;
       })
       .catch((e) => console.error(e));
   }
@@ -34,7 +32,6 @@ export default class AgentChat extends LightningElement {
     this.currentAgentId = null;
     this.agentObjective = null;
     this.agentMessages = [];
-    this.isRunning = false;
   }
 
   handleSubscribe() {
@@ -51,12 +48,13 @@ export default class AgentChat extends LightningElement {
         switch (data.payload.Type__c) {
           case "RECEIVED":
             const agent = JSON.parse(eventData);
-            this.agentMessages.push({
-              id: data.event.replayId,
-              title: "Agent",
-              text: agent.thoughts.text,
-              icon: "standard:bot"
-            });
+            const lastMessage =
+              this.agentMessages[this.agentMessages.length - 1];
+            if (lastMessage && lastMessage.title === "Agent") {
+              lastMessage.id = data.event.replayId;
+              lastMessage.text = agent.thoughts.text;
+            }
+            this.agentMessages = [...this.agentMessages];
             break;
 
           case "EXECUTE_ACTION":
@@ -73,6 +71,14 @@ export default class AgentChat extends LightningElement {
               icon: "standard:apex"
             });
             break;
+          case "ACTION_ERROR":
+            this.agentMessages.push({
+              id: data.event.replayId,
+              title: "Action Error",
+              text: eventData,
+              icon: "standard:process_exception"
+            });
+            break;
           case "AGENT_COMPLETED":
             console.log("Agent Complete: ", eventData);
             this.agentMessages.push({
@@ -81,7 +87,14 @@ export default class AgentChat extends LightningElement {
               text: eventData,
               icon: "standard:task2"
             });
-            this.isRunning = false;
+            break;
+          case "SENT":
+            this.agentMessages.push({
+              id: data.event.replayId,
+              title: "Agent",
+              text: "thinking...",
+              icon: "standard:bot"
+            });
             break;
           case "AGENT_CRASH":
             this.agentMessages.push({
@@ -90,7 +103,6 @@ export default class AgentChat extends LightningElement {
               text: eventData,
               icon: "standard:incident"
             });
-            this.isRunning = false;
             break;
         }
       } catch (e) {

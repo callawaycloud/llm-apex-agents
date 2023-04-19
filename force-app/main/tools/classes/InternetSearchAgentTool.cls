@@ -11,15 +11,13 @@ public class InternetSearchAgentTool implements IAgentTool {
 
   // Define the input parameter(s) for this action
   public Map<string, string> getParameters() {
-    Map<string, string> params = new Map<string, string>();
-    params.put('query', 'The search query to perform');
-    return params;
+    return new Map<string, string>{ 'query' => 'The search query to perform' };
   }
 
   public String execute(Map<string, string> args) {
     String query = args.get('query');
     if (query == null || query == '') {
-      throw new SearchActionException('Query is empty');
+      throw new Agent.ActionRuntimeException('Query is empty');
     }
 
     HttpRequest request = new HttpRequest();
@@ -48,13 +46,10 @@ public class InternetSearchAgentTool implements IAgentTool {
 
       return JSON.serialize(results);
     } else {
-      throw new SearchActionException(
+      throw new Agent.ActionRuntimeException(
         'API returned status code ' + response.getStatusCode()
       );
     }
-  }
-
-  private class SearchActionException extends Exception {
   }
 
   private class SearchReturn {

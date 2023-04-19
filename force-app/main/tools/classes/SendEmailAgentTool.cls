@@ -5,15 +5,13 @@ public class SendEmailAgentTool implements IAgentTool {
   }
 
   public Map<string, string> getParameters() {
-    Map<string, string> params = new Map<string, string>{
+    return new Map<string, string>{
       'subject' => 'email subject',
       'body' => 'html email body',
       'to' => 'comma seperated list of email addresses',
       'cc' => '(optional) comma seperated list of email addresses',
       'replyTo' => '(optional) email address'
     };
-
-    return params;
   }
 
   public string execute(Map<string, string> args) {
@@ -22,7 +20,7 @@ public class SendEmailAgentTool implements IAgentTool {
       !args.containsKey('body') ||
       !args.containsKey('to')
     ) {
-      return 'Error: Missing required parameters.';
+      throw new Agent.ActionRuntimeException('Missing required parameters.');
     }
 
     List<String> toAddresses = args.get('to').split(',');
@@ -50,10 +48,12 @@ public class SendEmailAgentTool implements IAgentTool {
           String.join(toAddresses, ', ') +
           '.';
       } else {
-        return 'Error: ' + results[0].getErrors()[0].getMessage();
+        throw new Agent.ActionRuntimeException(
+          results[0].getErrors()[0].getMessage()
+        );
       }
     } catch (Exception e) {
-      return 'Error: ' + e.getMessage();
+      throw new Agent.ActionRuntimeException(e.getMessage());
     }
   }
 }

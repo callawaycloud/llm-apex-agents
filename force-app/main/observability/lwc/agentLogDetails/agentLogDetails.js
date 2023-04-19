@@ -27,7 +27,7 @@ export default class AgentLogDetails extends LightningModal {
     this.eventLog = JSON.parse(this.log.Events__c)
       .map((it) => ({
         ...it,
-        data: JSON.parse(it.data),
+        data: parseDataStr(it.data),
         ...getEventExtraProps(it)
       }))
       .reverse();
@@ -76,6 +76,14 @@ export default class AgentLogDetails extends LightningModal {
   }
 }
 
+function parseDataStr(data) {
+  try {
+    return JSON.parse(data);
+  } catch (e) {
+    return data;
+  }
+}
+
 function getEventExtraProps(evt) {
   return (() => {
     switch (evt.eventType) {
@@ -98,6 +106,10 @@ function getEventExtraProps(evt) {
       case "AGENT_CREATED":
         return {
           icon: "standard:messaging_user"
+        };
+      case "ACTION_ERROR":
+        return {
+          icon: "standard:process_exception"
         };
       default:
         return {

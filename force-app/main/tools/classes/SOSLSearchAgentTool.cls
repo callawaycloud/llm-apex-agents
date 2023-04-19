@@ -5,10 +5,10 @@ public class SOSLSearchAgentTool implements IAgentTool {
   }
 
   public Map<string, string> getParameters() {
-    Map<string, string> params = new Map<string, string>();
-    params.put('term', 'The search term');
-    params.put('objectType', 'The SObject to search for');
-    return params;
+    return new Map<string, string>{
+      'term' => 'The search term',
+      'objectType' => 'The SObject to search for'
+    };
   }
 
   public string execute(Map<string, string> args) {
@@ -16,11 +16,15 @@ public class SOSLSearchAgentTool implements IAgentTool {
     String objectType = args.get('objectType');
 
     if (searchTerm == null) {
-      return 'Missing required parameter: searchTerm';
+      throw new Agent.ActionRuntimeException(
+        'Missing required parameter: searchTerm'
+      );
     }
 
     if (objectType == null) {
-      return 'Missing required parameter: objectType';
+      throw new Agent.ActionRuntimeException(
+        'Missing required parameter: objectType'
+      );
     }
 
     List<List<sObject>> results = search.query(

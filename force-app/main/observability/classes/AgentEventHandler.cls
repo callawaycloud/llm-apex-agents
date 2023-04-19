@@ -50,13 +50,13 @@ public with sharing class AgentEventHandler {
         events.add(new AgentEventLog(newEvent));
 
         if (newEvent.Type__c == Agent.EventType.AGENT_CREATED.name()) {
-          log.Input__c = newEvent.Data__c;
+          log.Input__c = jsonStringToString(newEvent.Data__c);
           log.Status__c = 'In Progress';
         } else if (newEvent.Type__c == Agent.EventType.AGENT_COMPLETED.name()) {
-          log.Result__c = newEvent.Data__c;
+          log.Result__c = jsonStringToString(newEvent.Data__c);
           log.Status__c = 'Completed';
         } else if (newEvent.Type__c == Agent.EventType.AGENT_CRASH.name()) {
-          log.Error__c = newEvent.Data__c;
+          log.Error__c = jsonStringToString(newEvent.Data__c);
           log.Status__c = 'Error';
         }
         log.Last_Agent_Update__c = newEvent.CreatedDate;
@@ -67,6 +67,14 @@ public with sharing class AgentEventHandler {
       logsToUpsert.add(log);
     }
     upsert logsToUpsert Agent_Id__c;
+  }
+
+  private String jsonStringToString(string jsonStr) {
+    try {
+      return (String) JSON.deserialize(jsonStr, String.class);
+    } catch (Exception ex) {
+      return jsonStr;
+    }
   }
 
   public class AgentEventLog {

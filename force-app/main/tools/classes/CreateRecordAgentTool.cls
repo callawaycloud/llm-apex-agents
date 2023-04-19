@@ -17,13 +17,15 @@ public class CreateRecordAgentTool implements IAgentTool {
     String fieldsJson = args.get('records');
 
     if (String.isBlank(sObjectType) || String.isBlank(fieldsJson)) {
-      return 'Error: Missing parameter(s). Please provide both sObjectType and fields.';
+      throw new Agent.ActionRuntimeException(
+        'Missing parameter(s). Please provide both sObjectType and fields.'
+      );
     }
 
     try {
       SObjectType objectType = Schema.getGlobalDescribe().get(sObjectType);
       if (objectType == null) {
-        return 'Error: Invalid sObjectType provided.';
+        throw new Agent.ActionRuntimeException('Invalid sObjectType provided.');
       }
 
       SObject[] records = new List<SObject>();
@@ -80,7 +82,7 @@ public class CreateRecordAgentTool implements IAgentTool {
 
       return 'New Record Ids: ' + String.join(ids, ', ');
     } catch (Exception e) {
-      return 'Error: ' + e.getMessage();
+      throw new Agent.ActionRuntimeException(e.getMessage());
     }
   }
 }

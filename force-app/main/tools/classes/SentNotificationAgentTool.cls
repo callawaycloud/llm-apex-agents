@@ -19,13 +19,12 @@ public class SentNotificationAgentTool implements IAgentTool {
   }
 
   public Map<string, string> getParameters() {
-    Map<string, string> params = new Map<string, string>{
+    return new Map<string, string>{
       'title' => 'Notification Title',
       'body' => 'Notification Message',
       'to' => 'User Id to send notification to',
       'targetId' => 'Record Id this notification relates to'
     };
-    return params;
   }
 
   public string execute(Map<string, string> args) {

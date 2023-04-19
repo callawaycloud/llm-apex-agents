@@ -45,4 +45,7 @@ public class Agent {
 
   public class FatalException extends Exception {
   }
+
+  public class ActionRuntimeException extends Exception {
+  }
 }

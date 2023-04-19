@@ -26,7 +26,10 @@
       <div class="slds-m-around_medium">
         <lightning-card variant="narrow" icon-name="standard:problem">
           <h1 slot="title">Agent Objective</h1>
-          <div>{agentObjective}</div>
+          <lightning-formatted-text
+            id="objective"
+            value={agentObjective}
+          ></lightning-formatted-text>
         </lightning-card>
         <template for:each={agentMessages} for:item="msg">
           <lightning-card key={msg.id} variant="narrow" icon-name={msg.icon}>
@@ -37,11 +40,6 @@
             ></lightning-formatted-text>
           </lightning-card>
         </template>
-
-        <lightning-card if:true={isRunning}>
-          <hr />
-          <lightning-spinner alternative-text="Loading..."> </lightning-spinner>
-        </lightning-card>
       </div>
     </lightning-card>
   </template>
