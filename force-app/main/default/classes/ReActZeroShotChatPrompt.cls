@@ -91,13 +91,15 @@ public class ReActZeroShotChatPrompt implements Prompt.IReAct {
       'Today is ' +
       Date.today().format() +
       '. ' +
-      'You are assisting ' +
+      'You are assisting User ' +
       UserInfo.getFirstName() +
       ' ' +
       UserInfo.getLastName() +
-      '(UserID: ' +
+      '(Id: ' +
       UserInfo.getUserId() +
-      ').\n' +
+      ', Email: ' +
+      UserInfo.getUserEmail() +
+      ').\n\n' +
       'Your Assignment: \n"""' +
       objective +
       '"""\n\n' +

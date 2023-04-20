@@ -4,7 +4,7 @@ Run Large Language Model (GPT) agents in Salesforce apex.
 
 <img width="1506" alt="Screen_Recording_2023-04-18_at_4_09_13_PM_mov" src="https://user-images.githubusercontent.com/5217568/232917551-a0e53a4a-65a7-4b8b-ad74-0f9860dce1cc.png">
 
-*[Watch Full Demo Here](https://youtu.be/lQO369JajEc)*
+*[Watch Full Demo Here](https://www.youtube.com/watch?v=zLP33ssXUfU)*
 
 ## :shipit: What is an Agent?
 

@@ -8,8 +8,8 @@ public class SendEmailAgentTool implements IAgentTool {
     return new Map<string, string>{
       'subject' => 'email subject',
       'body' => 'html email body',
-      'to' => 'comma seperated list of email addresses',
-      'cc' => '(optional) comma seperated list of email addresses',
+      'to' => 'comma seperated list of VALID email addresses',
+      'cc' => '(optional) comma seperated list of VALID email addresses',
       'replyTo' => '(optional) email address'
     };
   }
@@ -44,6 +44,7 @@ public class SendEmailAgentTool implements IAgentTool {
         new List<Messaging.SingleEmailMessage>{ mail }
       );
       if (results[0].isSuccess()) {
+        AgentQueueable.FORCE_NEW_QUEUEABLE = true;
         return 'Email sent successfully to ' +
           String.join(toAddresses, ', ') +
           '.';

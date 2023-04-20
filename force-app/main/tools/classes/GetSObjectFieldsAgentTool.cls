@@ -21,10 +21,21 @@ public class GetSObjectFieldsAgentTool implements IAgentTool {
     String[] fields = new List<String>{};
     for (String key : mfields.keySet()) {
       Schema.DescribeFieldResult field = mfields.get(key).getDescribe();
+
+      String reference = '';
+      if (field.getType() === Schema.DisplayType.REFERENCE) {
+        String[] references = new List<String>{};
+
+        for (Schema.SObjectType ref : field.getReferenceTo()) {
+          references.add(ref.getDescribe().getName());
+        }
+        reference = '(' + String.join(references, ', ') + ')';
+      }
+
       fields.add(
         String.format(
-          '{0}: {1}',
-          new List<String>{ field.getName(), field.getType().name() }
+          '{0}: {1}{2}',
+          new List<String>{ field.getName(), field.getType().name(), reference }
         )
       );
     }

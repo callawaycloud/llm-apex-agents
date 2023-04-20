@@ -60,9 +60,11 @@ export default class AgentChat extends LightningElement {
           case "EXECUTE_ACTION":
             const action = JSON.parse(eventData);
 
-            const args = Object.keys(action.args)
-              .map((it) => `- ${it}: ${action.args[it]}`)
-              .join("\n");
+            const args = action.args
+              ? Object.keys(action.args)
+                  .map((it) => `- ${it}: ${action.args[it]}`)
+                  .join("\n")
+              : "";
 
             this.agentMessages.push({
               id: data.event.replayId,
