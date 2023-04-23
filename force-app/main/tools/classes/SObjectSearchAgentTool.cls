@@ -4,13 +4,13 @@ public class KnowledgeArticleAgentTool implements IAgentTool {
     }
 
     public Map<String, String> getParameters() {
-        return new Map<String, String>({
+        return new Map<String, String>{
             'searchText' => 'The text to search for in Knowledge Articles',
             'nbResult' => 'The maximum number of results to return',
             'objectType' => 'The SObject to search: KnowledgeArticleVersion, Account, Contact, etc. Use KnowledgeArticleVersion for Knowledge Base Articles.',
             'language' => 'For Knowledge Base Articles, The language to filter the articles by: en_US, es, fr, etc',
             'publishStatus' => 'For Knowledge Base Articles, The publishing status of the articles to filter: Online, Draft, or Archived'
-        });
+        };
     }
 
     public String execute(Map<String, String> args) {
@@ -46,11 +46,6 @@ public class KnowledgeArticleAgentTool implements IAgentTool {
             throw new Agent.ActionRuntimeException('invalid value for parameter: nbResult');
         }
         
-        List<Search.Suggestion> suggestionResults = searchKnowledgeArticles(searchText, objectType, language, publishStatus, nbResult);
-        return formatResults(suggestionResults);
-    }
-    
-    private List<Search.Suggestion> searchKnowledgeArticles(String searchText, String objectType, String language, String publishStatus, Integer nbResult) {
         Search.SuggestionOption options = new Search.SuggestionOption();
         if (objectType == 'KnowledgeArticleVersion') {
             Search.KnowledgeSuggestionFilter filters = new Search.KnowledgeSuggestionFilter();
@@ -59,18 +54,21 @@ public class KnowledgeArticleAgentTool implements IAgentTool {
             options.setFilter(filters);
         }
         options.setLimit(nbResult);
-        return Search.suggest(searchText, objectType, options);
-    }
-    
-    private String formatResults(List<Search.Suggestion> suggestionResults) {
+        
+        Search.SuggestionResults suggestionResults = Search.suggest(searchText, objectType, options);
+        
         String result = 'Results:\n';
-        for (Search.Suggestion suggestion : suggestionResults) {
-            if(suggestion.getSobject().isSet('Title')) { //KnowledgeArticleVersion
-                result += '- ' + suggestion.getSobject().get('Title') + ' (' + suggestion.getSobject().get('Id') + ')\n';
-            } else if(suggestion.getSobject().isSet('Name')) {// Other SObject
-                result += '- ' + suggestion.getSobject().get('Name') + ' (' + suggestion.getSobject().get('Id') + ')\n';
-            } else { // Should not happen
-                result += '- ' + suggestion.getSobject().get('Id') + '\n';
+        for (Search.SuggestionResult searchResult : suggestionResults.getSuggestionResults()) {
+            if (objectType == 'KnowledgeArticleVersion') {
+                if(searchResult.getSobject().isSet('Title')) { //KnowledgeArticleVersion
+                	result += '- ' + searchResult.getSobject().get('Title') + ' (' + searchResult.getSobject().get('Id') + ')\n';
+                }
+            } else {
+                if(searchResult.getSobject().isSet('Name')) {// Other SObject
+                    result += '- ' + searchResult.getSobject().get('Name') + ' (' + searchResult.getSobject().get('Id') + ')\n';
+                } else { // Should not happen
+                    result += '- ' + searchResult.getSobject().get('Id') + '\n';
+                }
             }
         }
         return result;

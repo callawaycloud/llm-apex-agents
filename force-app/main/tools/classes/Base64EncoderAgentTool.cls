@@ -5,9 +5,9 @@ public class Base64EncoderAgentTool implements IAgentTool {
     }
   
     public Map<String, String> getParameters() {
-      return new Map<String, String>({
+      return new Map<String, String>{
         'data' => 'The data to be base64 encoded'
-      });
+      };
     }
   
     public String execute(Map<String, String> args) {

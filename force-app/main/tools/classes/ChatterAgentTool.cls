@@ -18,7 +18,7 @@ public class ChatterAgentTool implements IAgentTool {
             'lastEditDate' => 'The date and time of the most recent edit, as a DateTime string. Optional.',
             'revision' => 'The version number of the Chatter post as an Integer. Optional.',
             'status' => 'The current state of the Chatter post: Published or PendingReview. The value Published  means publicly available while PendingReview means  awaiting approval.'
-        }
+        };
     }
 
     public String execute(Map<String, String> args) {

@@ -4,11 +4,11 @@ public class FileCreationAgentTool implements IAgentTool {
     }
 
     public Map<String, String> getParameters() {
-        return new Map<String, String>({
+        return new Map<String, String>{
             'fileName' => 'The name of the file to be created',
             'fileContent' => 'The string content of the file',
             'recordId' => 'The Salesforce record Id to which the file should be linked (optional)'
-        });
+        };
     }
 
     private String base64Encode(String data) {
