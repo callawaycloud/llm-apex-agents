@@ -1,13 +1,13 @@
-public class KnowledgeArticleAgentTool implements IAgentTool {
+public class zKnowledgeBaseSearchAgentTool implements IAgentTool {
     public String getDescription() {
-        return 'Returns a list of SObject records or Salesforce Knowledge articles whose names or titles match the user’s search query string';
+        return 'Returns a list of Salesforce Knowledge articles or SObject records whose names or titles match the user’s search query string';
     }
 
     public Map<String, String> getParameters() {
         return new Map<String, String>{
             'searchText' => 'The text to search for in Knowledge Articles',
             'nbResult' => 'The maximum number of results to return',
-            'objectType' => 'The SObject to search: KnowledgeArticleVersion, Account, Contact, etc. Use KnowledgeArticleVersion for Knowledge Base Articles.',
+            'objectType' => 'Use KnowledgeArticleVersion for Knowledge Base Articles. KnowledgeArticleVersion, Account, Contact, etc. ',
             'language' => 'For Knowledge Base Articles, The language to filter the articles by: en_US, es, fr, etc',
             'publishStatus' => 'For Knowledge Base Articles, The publishing status of the articles to filter: Online, Draft, or Archived'
         };

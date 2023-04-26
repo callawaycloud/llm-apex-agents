@@ -1,4 +1,4 @@
-public class FileCreationAgentTool implements IAgentTool {
+public class zFileCreationAgentTool implements IAgentTool {
     public String getDescription() {
         return 'Create Salesforce files and optionally link them to Salesforce records';
     }
@@ -6,29 +6,27 @@ public class FileCreationAgentTool implements IAgentTool {
     public Map<String, String> getParameters() {
         return new Map<String, String>{
             'fileName' => 'The name of the file to be created',
-            'fileContent' => 'The string content of the file',
+            'fileTextContent' => 'File content as a string',
             'recordId' => 'The Salesforce record Id to which the file should be linked (optional)'
         };
     }
 
-    private String base64Encode(String data) {
+    private Blob base64Encode(String data) {
         Blob inputBlob = Blob.valueOf(data);
-        String base64EncodedData = EncodingUtil.base64Encode(inputBlob);
-        return base64EncodedData;
+        return Blob.valueOf(EncodingUtil.base64Encode(inputBlob));
     }
 
     public String execute(Map<String, String> args) {
-        if (String.isEmpty(args.get('fileName'))) {
+        if (!args.containsKey('fileName')) {
             throw new Agent.ActionRuntimeException('Missing required parameter: fileName');
         }
 
-        if (String.isEmpty(args.get('fileContent'))) {
-            throw new Agent.ActionRuntimeException('Missing required parameter: fileContent');
+        if (!args.containsKey('fileTextContent')) {
+            throw new Agent.ActionRuntimeException('Missing required parameter: fileTextContent');
         }
 
         String fileName = args.get('fileName');
-        String fileContent = args.get('fileContent');
-        String recordId = args.get('recordId');
+        String fileContent = args.get('fileTextContent');
 
         ContentVersion cv = new ContentVersion();
         cv.Title = fileName;
@@ -37,14 +35,16 @@ public class FileCreationAgentTool implements IAgentTool {
         cv.IsMajorVersion = true;
         insert cv;
 
-        if (!String.isEmpty(recordId)) {
+        if (args.containsKey('recordId')) {
+            ContentVersion cv2 = [SELECT ContentDocumentId FROM ContentVersion WHERE Id =: cv.Id];
+            
             ContentDocumentLink cdl = new ContentDocumentLink();
-            cdl.LinkedEntityId = recordId;
-            cdl.ContentDocumentId = cv.Id;
+            cdl.LinkedEntityId = args.get('recordId');
+            cdl.ContentDocumentId = cv2.ContentDocumentId;
             cdl.shareType = 'V';
             insert cdl;
         }
 
-        return 'File created with Id: ' + conDocId;
+        return 'File created with Id: ' + cv.id;
     }
 }

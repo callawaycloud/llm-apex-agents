@@ -1,4 +1,4 @@
-public class MergeRecordsAgentTool implements IAgentTool {
+public class zMergeRecordsAgentTool implements IAgentTool {
     
     public String getDescription() {
         return 'Merge records of the same sObject type';

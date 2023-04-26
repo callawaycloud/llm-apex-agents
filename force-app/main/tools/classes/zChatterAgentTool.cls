@@ -1,6 +1,6 @@
-public class ChatterAgentTool implements IAgentTool {
+public class zChatterAgentTool implements IAgentTool {
     public String getDescription() {
-        return 'Chatter Agent Tool for managing Chatter posts';
+        return 'Chatter Agent Tool for retrieving, inserting, updating, upserting, and deleting Chatter posts';
     }
 
     public Map<String, String> getParameters() {
@@ -12,8 +12,8 @@ public class ChatterAgentTool implements IAgentTool {
             'body' => 'The main text content of the Chatter post',
             'isRichText' => 'Indicates whether the post body contains rich text formatting: true or false',
             'linkUrl' => 'The web address for LinkPost type.',
-            'visibility' => 'The post visibility level: AllUsers (visible to everyone) or InternalUsers (visible only to internal users). Optional. For record posts, Visibility is set to InternalUsers for all internal users by default.',
-            'type' => 'The category of the Chatter post: LinkPost, QuestionPost, or TextPost. Usually will be TextPost',
+            'visibility' => 'Optional. AllUsers, InternalUsers. InternalUsers is the default.',
+            'type' => 'Optional. Default is TextPost. LinkPost, QuestionPost, or TextPost.',
             'lastEditById' => 'The unique identifier of the Salesforce User who made the most recent edit. Optional',
             'lastEditDate' => 'The date and time of the most recent edit, as a DateTime string. Optional.',
             'revision' => 'The version number of the Chatter post as an Integer. Optional.',
@@ -43,8 +43,11 @@ public class ChatterAgentTool implements IAgentTool {
         }
     }
 
-    private Sobject setFeedItemFields(Sobject sobj, Map<String, String> args) {
+    private FeedItem setFeedItemFields(FeedItem sobj, Map<String, String> args) {
         for (String key : args.keySet()) {
+            if(key=='operation') {
+                continue;
+            }
             if (args.get(key) != null) {
                 if (key == 'isRichText') {
                     sobj.put(key, Boolean.valueOf(args.get(key)));
@@ -61,7 +64,7 @@ public class ChatterAgentTool implements IAgentTool {
     }
 
     private String retrievePost(String Id) {
-        FeedItem post = [SELECT Id, parentId, Body, isRichText, linkUrl, visibility, type CreatedDate, LastEditById, LastEditDate, Revision, Status FROM FeedItem WHERE Id = :Id];
+        FeedItem post = [SELECT Id, parentId, Body, isRichText, linkUrl, visibility, type, CreatedDate, LastEditById, LastEditDate, Revision, Status FROM FeedItem WHERE Id = :Id];
         return JSON.serialize(post);
     }
 
@@ -72,6 +75,7 @@ public class ChatterAgentTool implements IAgentTool {
     }
 
     private String insertUpdateUpsert(Map<String, String> args) {
+        String retval = '';
         String operation = args.get('operation');
         if(operation == 'insert') {
             if (String.isEmpty(args.get('parentId'))) {
@@ -92,13 +96,14 @@ public class ChatterAgentTool implements IAgentTool {
         post = setFeedItemFields(post, args);
         if(operation == 'insert') {
             insert post;
-            return 'Post inserted with Id: ' + post.Id;
+            retval = 'Post inserted with Id: ' + post.Id;
         } else if(operation == 'update') {
             update post;
-            return 'Post updated with Id: ' + post.Id;
+            retval = 'Post updated with Id: ' + post.Id;
         } else if (operation == 'upsert') {
             upsert post;
-            return 'Post upserted with Id: ' + post.Id;
+            retval = 'Post upserted with Id: ' + post.Id;
         }
+        return retval;
     }
 }
