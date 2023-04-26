@@ -61,7 +61,7 @@ public with sharing class OpenAICompletionModel implements CompletionModel.I {
           // ======================================
           // Retry only for the case 
           // 429 - The engine is currently overloaded, please try again later
-          if(statusCode == 429 && statusMessage.contains('overloaded') {
+          if(statusCode == 429 && statusMessage.contains('overloaded')) {
             continue; // retry up to maxRetries times
           }
           // else throw exception
